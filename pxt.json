@@ -1,0 +1,19 @@
+{
+    "name": "pxt-cw01",
+    "version": "0.0.377",
+    "description": "",
+    "dependencies": {
+        "core": "*",
+        "radio": "*"
+    },
+    "files": [
+        "README.md",
+        "main.ts"
+    ],
+    "testFiles": [
+        "test.ts"
+    ],
+    "public": false,
+    "preferredEditor": "tsprj",
+    "installedVersion": "workspace:7a0e57c8-4d5b-4ecf-c494-c0477f403e47"
+}
