@@ -22,6 +22,10 @@ namespace cw01 {
     let mqtt_payload: string = ""
     let mqtt_topic: string = ""
     let prev_mqtt_payload: string = ""
+    let topics: string[] = []
+    let topic_count: number = 0
+    let topic_rcv: string = ""
+    let timer: number = 0
 
     start = true
     serial.redirect(SerialPin.P1, SerialPin.P0, 115200)
@@ -577,179 +581,243 @@ namespace cw01 {
         })
     }
 
+    //% weight=91
+    //% group="MQTT"
+    //% blockId="IoTMQTTping" block="CW01 ping MQTT"
+    export function IoTMQTTClientloop() {
+        //Header
+        if ((input.runningTime() - timer) > 3600000) {
+            timer = input.runningTime()
+            let header_one: Buffer = pins.packBuffer("!B", [0xC0])
+            let header_two: Buffer = pins.packBuffer("!B", [0x00])
+
+            serial.writeString("AT+CIPSEND=" + (header_one.length + header_two.length) + NEWLINE)
+            basic.pause(100)
+
+            serial.writeBuffer(header_one)
+            serial.writeBuffer(header_two)
+
+            basic.pause(500)
+        }
+
+    }
+
+    //% weight=91
+    //% group="MQTT"
+    //% blockId="IoTMQTTRecordMessages" block="CW01 record MQTT messages"
+    export function IoTMQTTRecordMessages(): void {
+        serial.onDataReceived("\n", function () {
+            if ((serial.readString()).includes("IPD")) {
+                IoTMQTTGetData()
+            }
+        })
+
+        basic.showString("#")
+        basic.showIcon(IconNames.Yes)
+    }
+
 
     //% weight=91
     //% group="MQTT"
     //% blockId="IoTMQTTGetLatestData" block="CW01 get latest payload data"
     export function IoTMQTTGetLatestData(): string {
-        let index: number = mqtt_payload.indexOf(mqtt_topic) + mqtt_topic.length
-        let payload_length: number = mqtt_payload.length - index - 6
+
         let payload: string
 
-        if (prev_mqtt_payload.compare(mqtt_payload) != 0) {
-            payload = mqtt_payload.substr(index, payload_length)
+        for (let i: number = 0; i < topics.length; i++) {
+            if (mqtt_payload.includes(topics[i])) {
+                topic_rcv = topics[i]
+                break
+            } else {
+                continue
+            }
+        }
 
-            return payload
+        if (prev_mqtt_payload.compare(mqtt_payload) != 0) {
+            let index: number = mqtt_payload.indexOf(topic_rcv) + topic_rcv.length
+            let payload_length: number = mqtt_payload.length - index - 6
+            payload = mqtt_payload.substr(index, payload_length)
         } else {
-            return ""
+            payload = ""
+        }
+
+        return payload
+
+    }
+
+    //% weight=91
+    //% group="MQTT"
+    //% blockId="IoTMQTTGetLatestTopic" block="CW01 get latest payload topic"
+    export function IoTMQTTGetLatestTopic(): string {
+
+        for (let i: number = 0; i < topics.length; i++) {
+            if (mqtt_payload.includes(topics[i])) {
+                topic_rcv = topics[i]
+                break
+            } else {
+                continue
+            }
+        }
+
+        return topic_rcv
+
+    }
+
+    function IoTMQTTGetData(): void {
+        basic.pause(500)
+        serial.writeString("AT+CIPRECVDATA=4" + NEWLINE)
+        basic.pause(300)
+        serial.readString()
+        serial.writeString("AT+CIPRECVDATA=200" + NEWLINE)
+        basic.pause(300)
+
+        mqtt_payload = serial.readString()
+        basic.pause(100)
+    }
+
+
+    /**
+    * Send boolean state to Microsoft Azure cloud computing platform
+    */
+    //% weight=91 color=#4B0082
+    //% group="Azure"
+    //% blockId="IoTSendStateToAzure" block="CW01 update Azure variable %asset with boolean state %value"
+    export function IoTSendStateToAzure(asset: string, value: boolean): void {
+
+        let payload: string = "{\"" + asset + "\": " + value + "}"
+
+        let request: string = "POST /135/" + azureAccess + " HTTP/1.1" + NEWLINE +
+            "Host: proxy.xinabox.cc" + NEWLINE +
+            "User-Agent: CW01/1.0" + NEWLINE +
+            "Content-Type: application/json" + NEWLINE +
+            "Accept: */*" + NEWLINE +
+            "Content-Length: " + (payload.length).toString() + NEWLINE + NEWLINE + payload + NEWLINE
+
+
+
+        serial.writeString("AT+CIPSEND=" + (request.length).toString() + NEWLINE)
+        basic.pause(100)
+        serial.writeString(request)
+        basic.pause(10)
+        serial.readString()
+        basic.pause(1000)
+
+        if (!get_status()) {
+            connectToAzure(azureAccess)
         }
     }
 
-        function IoTMQTTGetData(): void {
-            basic.pause(500)
-            serial.writeString("AT+CIPRECVDATA=4" + NEWLINE)
-            basic.pause(300)
-            serial.readString()
-            serial.writeString("AT+CIPRECVDATA=200" + NEWLINE)
-            basic.pause(300)
+    /**
+    * Get value from Microsoft Azure cloud computing platform. Value can be string, numerical and boolean.
+    */
+    //% weight=91 color=#4B0082
+    //% group="Azure"
+    //% blockId="IoTGetValueFromAzure" block="CW01 get latest value of Azure variable %asset"
+    export function IoTGetValueFromAzure(asset: string): string {
 
-            mqtt_payload = serial.readString()
-            basic.pause(100)
-        }
+        let value: string
+        let index1: number
+        let index2: number
+        let searchString: string = "\"" + asset + "\":"
+        let i: number = 0
 
+        let payload: string = "{}"
 
-        /**
-        * Send boolean state to Microsoft Azure cloud computing platform
-        */
-        //% weight=91 color=#4B0082
-        //% group="Azure"
-        //% blockId="IoTSendStateToAzure" block="CW01 update Azure variable %asset with boolean state %value"
-        export function IoTSendStateToAzure(asset: string, value: boolean): void {
-
-            let payload: string = "{\"" + asset + "\": " + value + "}"
-
-            let request: string = "POST /135/" + azureAccess + " HTTP/1.1" + NEWLINE +
-                "Host: proxy.xinabox.cc" + NEWLINE +
-                "User-Agent: CW01/1.0" + NEWLINE +
-                "Content-Type: application/json" + NEWLINE +
-                "Accept: */*" + NEWLINE +
-                "Content-Length: " + (payload.length).toString() + NEWLINE + NEWLINE + payload + NEWLINE
+        let request: string = "POST /135/" + azureAccess + " HTTP/1.1" + NEWLINE +
+            "Host: proxy.xinabox.cc" + NEWLINE +
+            "User-Agent: CW01/1.0" + NEWLINE +
+            "Content-Type: application/json" + NEWLINE +
+            "Accept: */*" + NEWLINE +
+            "Content-Length: " + (payload.length).toString() + NEWLINE + NEWLINE + payload + NEWLINE
 
 
 
-            serial.writeString("AT+CIPSEND=" + (request.length).toString() + NEWLINE)
-            basic.pause(100)
-            serial.writeString(request)
-            basic.pause(10)
-            serial.readString()
-            basic.pause(1000)
+        serial.writeString("AT+CIPSEND=" + (request.length).toString() + NEWLINE)
+        basic.pause(100)
+        serial.writeString(request)
+        basic.pause(10)
+        serial.readString()
 
-            if (!get_status()) {
-                connectToAzure(azureAccess)
-            }
-        }
-
-        /**
-        * Get value from Microsoft Azure cloud computing platform. Value can be string, numerical and boolean.
-        */
-        //% weight=91 color=#4B0082
-        //% group="Azure"
-        //% blockId="IoTGetValueFromAzure" block="CW01 get latest value of Azure variable %asset"
-        export function IoTGetValueFromAzure(asset: string): string {
-
-            let value: string
-            let index1: number
-            let index2: number
-            let searchString: string = "\"" + asset + "\":"
-            let i: number = 0
-
-            let payload: string = "{}"
-
-            let request: string = "POST /135/" + azureAccess + " HTTP/1.1" + NEWLINE +
-                "Host: proxy.xinabox.cc" + NEWLINE +
-                "User-Agent: CW01/1.0" + NEWLINE +
-                "Content-Type: application/json" + NEWLINE +
-                "Accept: */*" + NEWLINE +
-                "Content-Length: " + (payload.length).toString() + NEWLINE + NEWLINE + payload + NEWLINE
-
-
-
-            serial.writeString("AT+CIPSEND=" + (request.length).toString() + NEWLINE)
-            basic.pause(100)
-            serial.writeString(request)
-            basic.pause(10)
-            serial.readString()
-
-            for (; i < 10; i++) {
-                if (getDataLen() < 1000) {
-                    continue
-                } else {
-                    break
-                }
-            }
-
-            if (i == 10) {
-                connectToAzure(azureAccess)
-            }
-
-
-            serial.writeString("AT+CIPRECVDATA=1100" + NEWLINE)
-            basic.pause(200)
-            serial.readString()
-            serial.writeString("AT+CIPRECVDATA=200" + NEWLINE)
-            basic.pause(200)
-            res = serial.readString()
-
-            if (res.includes(asset)) {
-                index1 = res.indexOf(searchString) + searchString.length
-                index2 = res.indexOf("}", index1)
-                value = res.substr(index1, index2 - index1)
+        for (; i < 10; i++) {
+            if (getDataLen() < 1000) {
+                continue
             } else {
-
-                value = ""
-
+                break
             }
-
-            return value
-
         }
 
-        /**
-        * Add your GPS location
-        */
-        //% weight=91 color=#f2ca00
-        //% group="Ubidots"
-        //% blockId="IoTaddLocation" block="CW01 latitude is %lat and longitude is %lng"
-        export function IoTaddLocation(lat: number, lng: number): void {
-            latitude = lat
-            longitude = lng
+        if (i == 10) {
+            connectToAzure(azureAccess)
         }
 
-        function getDataLen(): number {
 
-            let index1: number
-            let index2: number
-            let searchString: string = ":"
-            let value: string
+        serial.writeString("AT+CIPRECVDATA=1100" + NEWLINE)
+        basic.pause(200)
+        serial.readString()
+        serial.writeString("AT+CIPRECVDATA=200" + NEWLINE)
+        basic.pause(200)
+        res = serial.readString()
 
-            serial.writeString("AT+CIPRECVLEN?" + NEWLINE)
-            basic.pause(300)
-            res = serial.readString()
+        if (res.includes(asset)) {
             index1 = res.indexOf(searchString) + searchString.length
-            index2 = res.indexOf(",", index1)
+            index2 = res.indexOf("}", index1)
             value = res.substr(index1, index2 - index1)
+        } else {
 
-            return parseInt(value)
+            value = ""
 
         }
 
-        function get_status(): boolean {
+        return value
 
-            serial.writeString("AT+CIPRECVDATA=200" + NEWLINE)
+    }
+
+    /**
+    * Add your GPS location
+    */
+    //% weight=91 color=#f2ca00
+    //% group="Ubidots"
+    //% blockId="IoTaddLocation" block="CW01 latitude is %lat and longitude is %lng"
+    export function IoTaddLocation(lat: number, lng: number): void {
+        latitude = lat
+        longitude = lng
+    }
+
+    function getDataLen(): number {
+
+        let index1: number
+        let index2: number
+        let searchString: string = ":"
+        let value: string
+
+        serial.writeString("AT+CIPRECVLEN?" + NEWLINE)
+        basic.pause(300)
+        res = serial.readString()
+        index1 = res.indexOf(searchString) + searchString.length
+        index2 = res.indexOf(",", index1)
+        value = res.substr(index1, index2 - index1)
+
+        return parseInt(value)
+
+    }
+
+    function get_status(): boolean {
+
+        serial.writeString("AT+CIPRECVDATA=200" + NEWLINE)
+        basic.pause(100)
+        res = serial.readString()
+
+        if (res.includes("HTTP/1.1 200") || res.includes("HTTP/1.1 201") || res.includes("HTTP/1.0 202")) {
+            basic.showIcon(IconNames.Yes)
             basic.pause(100)
-            res = serial.readString()
-
-            if (res.includes("HTTP/1.1 200") || res.includes("HTTP/1.1 201") || res.includes("HTTP/1.0 202")) {
-                basic.showIcon(IconNames.Yes)
-                basic.pause(100)
-                basic.showString("")
-                return true
-            } else {
-                basic.showIcon(IconNames.No)
-                basic.pause(100)
-                basic.showString("")
-                return false
-            }
+            basic.showString("")
+            return true
+        } else {
+            basic.showIcon(IconNames.No)
+            basic.pause(100)
+            basic.showString("")
+            return false
         }
+    }
 
-    } 
+} 
