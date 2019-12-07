@@ -539,7 +539,7 @@ namespace cw01 {
         basic.pause(1000)
 
         basic.showString("")
-        
+
     }
 
     //% weight=91
@@ -585,9 +585,9 @@ namespace cw01 {
     //% weight=91
     //% group="MQTT"
     //% blockId="IoTMQTTping" block="CW01 ping MQTT"
-    export function IoTMQTTClientloop() {
+    export function IoTMQTTping() {
         //Header
-        if ((input.runningTime() - timer) > 3600000) {
+        if ((input.runningTime() - timer) > 300000) {
             timer = input.runningTime()
             let header_one: Buffer = pins.packBuffer("!B", [0xC0])
             let header_two: Buffer = pins.packBuffer("!B", [0x00])
