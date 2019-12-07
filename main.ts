@@ -474,7 +474,7 @@ namespace cw01 {
         let protocol_lvl: Buffer = pins.packBuffer("!B", [4])
         //let msg_part_one: string = protocol_name + protocol_lvl
         let connect_flags: Buffer = (pins.packBuffer("!B", [(1 << 7) | (1 << 6) | (1 << 1)]))
-        let keep_alive: Buffer = pins.packBuffer("!H", [200])
+        let keep_alive: Buffer = pins.packBuffer("!H", [3600])
         let client_id: string = "CW01/1.1"
         let client_id_len: Buffer = pins.packBuffer("!H", [client_id.length])
         let username: string = Username
@@ -539,6 +539,7 @@ namespace cw01 {
         basic.pause(1000)
 
         basic.showString("")
+        
     }
 
     //% weight=91
@@ -555,7 +556,7 @@ namespace cw01 {
 
         topics[topic_count] = topic
         topic_count++
-        
+
         //Msg part one
         let ctrl_pkt: Buffer = pins.packBuffer("!B", [0x82])
         let remain_len: Buffer = pins.packBuffer("!B", [pid.length + topic_len.length + topic.length + qos.length])
@@ -582,6 +583,8 @@ namespace cw01 {
                 IoTMQTTGetData()
             }
         })
+
+        timer = input.runningTime()
     }
 
     //% weight=91
@@ -616,7 +619,6 @@ namespace cw01 {
         })
 
         basic.showString("#")
-        basic.showString("")
     }
 
 
