@@ -578,11 +578,6 @@ namespace cw01 {
         basic.pause(100)
         serial.readString()
 
-        serial.onDataReceived("\n", function () {
-            if ((serial.readString()).includes("IPD")) {
-                IoTMQTTGetData()
-            }
-        })
 
         timer = input.runningTime()
     }
