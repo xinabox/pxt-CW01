@@ -553,6 +553,9 @@ namespace cw01 {
         let topic_len: Buffer = pins.packBuffer("!H", [topic.length])
         mqtt_topic = topic
 
+        topics[topic_count] = topic
+        topic_count++
+        
         //Msg part one
         let ctrl_pkt: Buffer = pins.packBuffer("!B", [0x82])
         let remain_len: Buffer = pins.packBuffer("!B", [pid.length + topic_len.length + topic.length + qos.length])
@@ -613,7 +616,7 @@ namespace cw01 {
         })
 
         basic.showString("#")
-        basic.showIcon(IconNames.Yes)
+        basic.showString("")
     }
 
 
