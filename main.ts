@@ -37,7 +37,7 @@ namespace cw01 {
         att_state_value: boolean
         att_asset: string
 
-        cw01_int_var123() {
+        constructor() {
             this.res = ""
             this.TOKEN = ""
             this.DEVICE_ID = ""
