@@ -106,26 +106,27 @@ namespace cw01 {
     //% blockId="connectToWifi" block="CW01 connect to WiFi SSID %SSID, password %PSK"
     export function connectToWifi(SSID: string, PSK: string): void {
         if (true) {
-            //serial.writeString("AT+CWMODE=1" + cw01_vars.NEWLINE)
+            serial.writeString("AT+CWMODE=1" + cw01_vars.NEWLINE)
             basic.pause(100)
-            /*serial.readString()
+            serial.readString()
             serial.writeString("AT+CWJAP=\"" + SSID + "\",\"" + PSK + "\"" + cw01_vars.NEWLINE)
             basic.pause(200)
             serial.readString()
             basic.pause(10000)
-            cw01_vars.res = serial.readLine()*/
+            cw01_vars.res = serial.readLine()
 
-            /*if (cw01_vars.res.compare("WIFI CONNECTED\r") == 0) {
+            if (cw01_vars.res.compare("WIFI CONNECTED\r") == 0) {
                 basic.showString("C")
                 cw01_vars.res = ""
             } else {
-            basic.showString("D")
-        }*/
+                basic.showString("D")
+            }
 
         } else {
-            //basic.showString("Missed begin block!")
+            basic.showString("Missed begin block!")
         }
     }
+
     /**
     * Connect to AllThingsTalk IoT platform
     */
