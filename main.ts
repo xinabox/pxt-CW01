@@ -5,70 +5,69 @@ enum USER {
     EDUCATIONAL = 2
 }
 
-class cw01_int_var123 {
-    res: string
-    TOKEN: string
-    DEVICE_ID: string
-    asset_name: string
-    NEWLINE: string
-    start: boolean
-    latitude: number
-    longitude: number
-    select: boolean
-    azureAccess: string
-    mqtt_payload: string
-    prev_mqtt_payload: string
-    block: boolean
-    mqtt_topic: string
-    fail_count: number
-    topics: string[]
-    topic_count: number
-    topic_rcv: string
-    timer: number
-    att_string: boolean
-    att_string_value: string
-    att_number: boolean
-    att_number_value: number
-    att_state: boolean
-    att_state_value: boolean
-    att_asset: string
-
-    cw01_int_var123() {
-        this.res = ""
-        this.TOKEN = ""
-        this.DEVICE_ID = ""
-        this.asset_name = ""
-        this.NEWLINE = "\u000D\u000A"
-        this.start = false
-        this.latitude = 0
-        this.longitude = 0
-        this.select = false
-        this.azureAccess = ""
-        this.mqtt_payload = ""
-        this.prev_mqtt_payload = ""
-        this.block = false
-        this.mqtt_topic = ""
-        this.fail_count = 0
-        this.topics = []
-        this.topic_count = 0
-        this.topic_rcv = ""
-        this.timer = 0
-        this.att_string = false
-        this.att_string_value = ""
-        this.att_number = false
-        this.att_number_value = 0
-        this.att_state = false
-        this.att_state_value = false
-        this.att_asset = ""
-    }
-}
-
-let cw01_vars = new cw01_int_var123()
 
 //% groups=["Common",ATT", "Ubidots", "Azure", "MQTT", "others"]
 //% weight=6 color=#2699BF icon="\uf110" block="CW01"
 namespace cw01 {
+    class cw01_int_var123 {
+        res: string
+        TOKEN: string
+        DEVICE_ID: string
+        asset_name: string
+        NEWLINE: string
+        start: boolean
+        latitude: number
+        longitude: number
+        select: boolean
+        azureAccess: string
+        mqtt_payload: string
+        prev_mqtt_payload: string
+        block: boolean
+        mqtt_topic: string
+        fail_count: number
+        topics: string[]
+        topic_count: number
+        topic_rcv: string
+        timer: number
+        att_string: boolean
+        att_string_value: string
+        att_number: boolean
+        att_number_value: number
+        att_state: boolean
+        att_state_value: boolean
+        att_asset: string
 
+        cw01_int_var123() {
+            this.res = ""
+            this.TOKEN = ""
+            this.DEVICE_ID = ""
+            this.asset_name = ""
+            this.NEWLINE = "\u000D\u000A"
+            this.start = false
+            this.latitude = 0
+            this.longitude = 0
+            this.select = false
+            this.azureAccess = ""
+            this.mqtt_payload = ""
+            this.prev_mqtt_payload = ""
+            this.block = false
+            this.mqtt_topic = ""
+            this.fail_count = 0
+            this.topics = []
+            this.topic_count = 0
+            this.topic_rcv = ""
+            this.timer = 0
+            this.att_string = false
+            this.att_string_value = ""
+            this.att_number = false
+            this.att_number_value = 0
+            this.att_state = false
+            this.att_state_value = false
+            this.att_asset = ""
+        }
+    }
+
+    let cw01_vars = new cw01_int_var123()
 
     cw01_vars.start = true
     serial.redirect(SerialPin.P1, SerialPin.P0, 115200)
