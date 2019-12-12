@@ -718,7 +718,6 @@ namespace cw01 {
 
                 if ((serial.readString()).includes("IPD")) {
                     IoTMQTTGetData()
-                    basic.showString("Hello!")
                     if (cw01_mqtt_vars.enable_event_1 || cw01_mqtt_vars.enable_event_2)
                         handler()
                 }
@@ -792,8 +791,6 @@ namespace cw01 {
             cw01_mqtt_vars.enable_event_2 = false
             cw01_mqtt_vars.new_topic = " "
         }
-
-        basic.showString(cw01_vars.mqtt_message)
 
         basic.pause(100)
     }
