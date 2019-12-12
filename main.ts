@@ -80,6 +80,7 @@ namespace cw01 {
         id: string
         id_enable: boolean
         timer_enable: boolean
+        sending_payload: boolean
 
         constructor() {
             this.new_payload = ""
@@ -91,6 +92,7 @@ namespace cw01 {
             this.id = ""
             this.id_enable = false
             this.timer_enable = true
+            this.sending_payload = false
         }
     }
 
@@ -624,6 +626,7 @@ namespace cw01 {
     export function IoTMQTTSendPayload(payload: string, Topic: string): void {
 
         cw01_mqtt_vars.timer_enable = false
+        cw01_mqtt_vars.sending_payload = true
 
         //Msg part two
         let topic: string = Topic
@@ -636,7 +639,7 @@ namespace cw01 {
 
         serial.writeString("AT+CIPSEND=" + (start_byte.length + msg_part_two_len.length + topic_len.length + topic.length + value.length) + cw01_vars.NEWLINE)
 
-        basic.pause(1000)
+        basic.pause(200)
 
         basic.showIcon(IconNames.Target)
 
@@ -650,6 +653,8 @@ namespace cw01 {
         basic.pause(1000)
 
         basic.showString("")
+
+        cw01_mqtt_vars.sending_payload = false
 
     }
 
@@ -732,6 +737,8 @@ namespace cw01 {
 
     function IoTMQTTGetData(): void {
         let payload: string
+
+        if (cw01_mqtt_vars.sending_payload) basic.pause(300)
 
         basic.pause(500)
         serial.writeString("AT+CIPRECVDATA=4" + cw01_vars.NEWLINE)
