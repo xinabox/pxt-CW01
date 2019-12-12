@@ -612,7 +612,7 @@ namespace cw01 {
     //% advanced=true
     export function IoTMQTTSetClientID(ID: string) {
         cw01_mqtt_vars.id = ID
-        cw01_mqtt_vars.id_enable = true;
+        cw01_mqtt_vars.id_enable = true
     }
 
 
