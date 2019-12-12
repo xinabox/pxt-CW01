@@ -673,40 +673,6 @@ namespace cw01 {
 
     //% weight=91
     //% group="MQTT"
-    //% blockId="IoTMQTTping" block="CW01 ping MQTT"
-    export function IoTMQTTping() {
-        //Header
-        if ((input.runningTime() - cw01_vars.timer) > 300000) {
-            cw01_vars.timer = input.runningTime()
-            let header_one: Buffer = pins.packBuffer("!B", [0xC0])
-            let header_two: Buffer = pins.packBuffer("!B", [0x00])
-
-            serial.writeString("AT+CIPSEND=" + (header_one.length + header_two.length) + cw01_vars.NEWLINE)
-            basic.pause(100)
-
-            serial.writeBuffer(header_one)
-            serial.writeBuffer(header_two)
-
-            basic.pause(500)
-        }
-
-    }
-
-    //% weight=91
-    //% group="MQTT"
-    //% blockId="IoTMQTTRecordMessages" block="CW01 record MQTT messages"
-    export function IoTMQTTRecordMessages(): void {
-        serial.onDataReceived("\n", function () {
-            if ((serial.readString()).includes("IPD")) {
-                IoTMQTTGetData()
-            }
-        })
-
-        basic.showString("#")
-    }
-
-    //% weight=91
-    //% group="MQTT"
     //% block="callback"
     export function callback(handler: () => void) {
 
