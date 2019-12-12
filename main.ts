@@ -618,13 +618,13 @@ namespace cw01 {
 
     //% weight=91
     //% group="MQTT"
-    //% blockId="IoTMQTTSendValue" block="CW01 send JSON %Json to topic %Topic"
-    export function IoTMQTTSendValue(Json: string, Topic: string): void {
+    //% blockId="IoTMQTTSendPayload" block="CW01 send payload %payload to topic %Topic"
+    export function IoTMQTTSendPayload(payload: string, Topic: string): void {
 
         //Msg part two
         let topic: string = Topic
         let topic_len: Buffer = pins.packBuffer("!H", [topic.length])
-        let value: string = Json
+        let value: string = payload
 
         //Msg part one
         let start_byte: Buffer = pins.packBuffer("!B", [0x30])
