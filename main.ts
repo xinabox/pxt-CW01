@@ -77,6 +77,8 @@ namespace cw01 {
         prev_topic: string
         enable_event_1: boolean
         enable_event_2: boolean
+        id: string
+        id_enable: boolean
 
         constructor() {
             this.new_payload = ""
@@ -85,6 +87,8 @@ namespace cw01 {
             this.prev_topic = ""
             this.enable_event_1 = false
             this.enable_event_2 = false
+            this.id = ""
+            this.id_enable = false
         }
     }
 
@@ -125,7 +129,7 @@ namespace cw01 {
     */
     //% weight=91 color=#ad0303
     //% group="Common"
-    //% blockId="connectToWifi" block="CW01 connect to WiFi SSID %SSID, password %PSK"
+    //% blockId="connectToWifi" block="CW01 connect to WiFi SSID %SSID password %PSK"
     export function connectToWifi(SSID: string, PSK: string): void {
         if (true) {
             serial.writeString("AT+CWMODE=1" + cw01_vars.NEWLINE)
@@ -528,7 +532,7 @@ namespace cw01 {
 
     //% weight=91
     //% group="MQTT"
-    //% blockId="IoTMQTTConnect" block="CW01 connect to MQTT broker URL %broker with Username %Username and Password %Password"
+    //% blockId="IoTMQTTConnect" block="CW01 connect to MQTT broker URL %broker with username %Username and password %Password"
     export function IoTMQTTConnect(broker: string, Username: string, Password: string): void {
 
         serial.writeString("AT+CIPSTART=\"TCP\",\"" + broker + "\",1883" + cw01_vars.NEWLINE)
@@ -540,7 +544,12 @@ namespace cw01 {
         //let msg_part_one: string = protocol_name + protocol_lvl
         let connect_flags: Buffer = (pins.packBuffer("!B", [(1 << 7) | (1 << 6) | (1 << 1)]))
         let keep_alive: Buffer = pins.packBuffer("!H", [3600])
-        let client_id: string = "CW01/1.1"
+        let client_id: string
+
+        if (cw01_mqtt_vars.id_enable) {
+            client_id = cw01_mqtt_vars.id
+        }
+
         let client_id_len: Buffer = pins.packBuffer("!H", [client_id.length])
         let username: string = Username
         let username_len: Buffer = pins.packBuffer("!H", [username.length])
@@ -550,8 +559,6 @@ namespace cw01 {
 
         serial.writeString("AT+CIPSEND=" + (1 + 1 + protocol_name_prior.length + protocol_name.length + protocol_lvl.length + connect_flags.length + keep_alive.length + client_id_len.length + client_id.length + username_len.length + username.length + password_len.length + password.length) + cw01_vars.NEWLINE)
         basic.pause(1000)
-        /*serial.writeBuffer(pins.packBuffer("!B", [4]))
-        serial.writeBuffer(pins.packBuffer("!B", [4]))*/
 
         //Msg part one
         serial.writeBuffer(pins.packBuffer("!B", [1 << 4]))
@@ -597,6 +604,15 @@ namespace cw01 {
         control.raiseEvent(EventBusSource.MICROBIT_ID_BUTTON_AB, EventBusValue.MICROBIT_BUTTON_EVT_CLICK)
 
 
+    }
+
+    //% weight=91
+    //% group="MQTT"
+    //% blockId="IoTMQTTSetClientID" block="CW01 set MQTT client ID %ID"
+    //% advanced=true
+    export function IoTMQTTSetClientID(ID: string) {
+        cw01_mqtt_vars.id = ID
+        cw01_mqtt_vars.id_enable = true
     }
 
 
@@ -673,7 +689,7 @@ namespace cw01 {
 
     //% weight=91
     //% group="MQTT"
-    //% block="callback"
+    //% block="CW01 on subscription"
     export function callback(handler: () => void) {
 
         control.onEvent(EventBusSource.MICROBIT_ID_BUTTON_AB, EventBusValue.MICROBIT_BUTTON_EVT_CLICK, function () {
