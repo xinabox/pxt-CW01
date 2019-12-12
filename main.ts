@@ -79,6 +79,7 @@ namespace cw01 {
         enable_event_2: boolean
         id: string
         id_enable: boolean
+        timer_enable: boolean
 
         constructor() {
             this.new_payload = ""
@@ -89,6 +90,7 @@ namespace cw01 {
             this.enable_event_2 = false
             this.id = ""
             this.id_enable = false
+            this.timer_enable = true
         }
     }
 
@@ -585,7 +587,7 @@ namespace cw01 {
         control.inBackground(function () {
             while (true) {
                 basic.pause(30000)
-                if (((input.runningTime() - cw01_vars.timer) > 180000)) {
+                if (((input.runningTime() - cw01_vars.timer) > 180000) && cw01_mqtt_vars.timer_enable) {
                     cw01_vars.timer = input.runningTime()
                     let header_one: Buffer = pins.packBuffer("!B", [0xC0])
                     let header_two: Buffer = pins.packBuffer("!B", [0x00])
@@ -620,6 +622,8 @@ namespace cw01 {
     //% group="MQTT"
     //% blockId="IoTMQTTSendPayload" block="CW01 send payload %payload to topic %Topic"
     export function IoTMQTTSendPayload(payload: string, Topic: string): void {
+
+        cw01_mqtt_vars.timer_enable = false
 
         //Msg part two
         let topic: string = Topic
