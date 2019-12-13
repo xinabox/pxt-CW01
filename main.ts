@@ -111,7 +111,6 @@ namespace cw01 {
     basic.pause(300)
     serial.readString()
     cw01_mqtt_vars.mac_addr = extract_mac()
-    basic.showString(cw01_mqtt_vars.mac_addr)
     serial.writeString("AT+CWMODE_DEF=3" + cw01_vars.NEWLINE)
     basic.pause(300)
     serial.writeString("AT+CIPRECVMODE=1" + cw01_vars.NEWLINE)
