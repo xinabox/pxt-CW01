@@ -81,6 +81,7 @@ namespace cw01 {
         id_enable: boolean
         timer_enable: boolean
         sending_payload: boolean
+        mac_addr: string
 
         constructor() {
             this.new_payload = ""
@@ -93,6 +94,7 @@ namespace cw01 {
             this.id_enable = false
             this.timer_enable = true
             this.sending_payload = false
+            this.mac_addr = ""
         }
     }
 
@@ -107,6 +109,9 @@ namespace cw01 {
     basic.pause(2000)
     serial.writeString("ATE0" + cw01_vars.NEWLINE)
     basic.pause(300)
+    serial.readString()
+    cw01_mqtt_vars.mac_addr = extract_mac()
+    basic.showString(cw01_mqtt_vars.mac_addr)
     serial.writeString("AT+CWMODE_DEF=3" + cw01_vars.NEWLINE)
     basic.pause(300)
     serial.writeString("AT+CIPRECVMODE=1" + cw01_vars.NEWLINE)
@@ -126,6 +131,20 @@ namespace cw01 {
             serial.writeString("AT+CWHOSTNAME=\"CW01\"" + cw01_vars.NEWLINE)
             control.reset()
         }
+    }
+
+    function extract_mac(): string {
+        let raw_str: string = ""
+        let mac_addr: string = ""
+        let index: number = 0
+        serial.writeString("AT+CIPSTAMAC_CUR?" + cw01_vars.NEWLINE)
+        basic.pause(500)
+        raw_str = serial.readString()
+        index = raw_str.indexOf("\"") + 1
+
+        mac_addr = raw_str.substr(index, 17)
+
+        return mac_addr
     }
 
     /**
@@ -552,6 +571,8 @@ namespace cw01 {
 
         if (cw01_mqtt_vars.id_enable) {
             client_id = cw01_mqtt_vars.id
+        } else {
+            client_id = cw01_mqtt_vars.mac_addr
         }
 
         let client_id_len: Buffer = pins.packBuffer("!H", [client_id.length])
@@ -651,10 +672,9 @@ namespace cw01 {
         serial.writeString(value)
 
         basic.pause(1000)
+        cw01_mqtt_vars.sending_payload = false
 
         basic.showString("")
-
-        cw01_mqtt_vars.sending_payload = false
 
     }
 
@@ -738,14 +758,16 @@ namespace cw01 {
     function IoTMQTTGetData(): void {
         let payload: string
 
-        if (cw01_mqtt_vars.sending_payload) basic.pause(300)
+        cw01_mqtt_vars.sending_payload.toString()
+        while (cw01_mqtt_vars.sending_payload) {
+            basic.pause(10)
+        }
 
-        basic.pause(500)
         serial.writeString("AT+CIPRECVDATA=4" + cw01_vars.NEWLINE)
-        basic.pause(300)
+        basic.pause(200)
         serial.readString()
         serial.writeString("AT+CIPRECVDATA=200" + cw01_vars.NEWLINE)
-        basic.pause(300)
+        basic.pause(200)
 
         cw01_vars.mqtt_message = serial.readString()
         basic.showIcon(IconNames.Yes)
