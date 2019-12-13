@@ -102,8 +102,17 @@ namespace cw01 {
         }
     }
 
+    class button_class {
+        sending_data: boolean
+
+        constructor() {
+            this.sending_data = false
+        }
+    }
+
     let cw01_vars = new cw01_int_var123()
     let cw01_mqtt_vars = new cw01_mqtt()
+    let cw01_button_object = new button_class()
 
     cw01_vars.start = true
     serial.redirect(SerialPin.P1, SerialPin.P0, 115200)
@@ -200,6 +209,12 @@ namespace cw01 {
     //% group="ATT"
     //% blockId="IoTSendStringToATT" block="CW01 send string %value to ATT asset %asset"
     export function IoTSendStringToATT(value: string, asset: string): void {
+
+        while (cw01_button_object.sending_data) {
+            basic.pause(100)
+        }
+
+        cw01_button_object.sending_data = true
         cw01_vars.asset_name = asset
         serial.writeString("AT+CIPMODE=0" + cw01_vars.NEWLINE)
         basic.pause(100)
@@ -230,6 +245,8 @@ namespace cw01 {
         get_status()
         basic.pause(1000)
 
+        cw01_button_object.sending_data = false
+
     }
 
     /**
@@ -239,6 +256,13 @@ namespace cw01 {
     //% group="ATT"
     //% blockId="IoTSendValueToATT" block="CW01 send value %value to ATT asset %asset"
     export function IoTSendValueToATT(value: number, asset: string): void {
+
+        while (cw01_button_object.sending_data) {
+            basic.pause(100)
+        }
+
+        cw01_button_object.sending_data = true
+
         cw01_vars.asset_name = asset
         serial.writeString("AT+CIPMODE=0" + cw01_vars.NEWLINE)
         basic.pause(100)
@@ -270,6 +294,8 @@ namespace cw01 {
         get_status()
 
         basic.pause(1000)
+
+        cw01_button_object.sending_data = false
     }
 
     /**
@@ -279,6 +305,13 @@ namespace cw01 {
     //% group="ATT"
     //% blockId="IoTSendStateToATT" block="CW01 send state %state to ATT asset %asset_name"
     export function IoTSendStateToATT(state: boolean, asset: string): void {
+
+        while (cw01_button_object.sending_data) {
+            basic.pause(100)
+        }
+
+        cw01_button_object.sending_data = true
+
         let stateStr: string
 
         if (state == true) {
@@ -318,6 +351,8 @@ namespace cw01 {
         get_status()
 
         basic.pause(1000)
+
+        cw01_button_object.sending_data = false
 
 
     }
