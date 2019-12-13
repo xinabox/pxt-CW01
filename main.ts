@@ -680,8 +680,8 @@ namespace cw01 {
         let send_ok: string = ""
 
         while (!(send_ok.includes("SEND OK"))) {
-            send_ok = serial.readString()
             basic.pause(300)
+            send_ok = serial.readString()
         }
         cw01_mqtt_vars.sending_payload = false
 
