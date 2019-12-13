@@ -677,7 +677,6 @@ namespace cw01 {
         serial.writeString(topic)
         serial.writeString(value)
 
-        let send_ok: string = ""
         basic.pause(1000)
         cw01_mqtt_vars.sending_payload = false
 
