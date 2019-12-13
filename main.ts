@@ -674,8 +674,6 @@ namespace cw01 {
         basic.pause(1000)
         cw01_mqtt_vars.sending_payload = false
 
-        basic.showString("")
-
     }
 
     //% weight=91
