@@ -82,6 +82,7 @@ namespace cw01 {
         timer_enable: boolean
         sending_payload: boolean
         sending_pingreq: boolean
+        receiving_msg: boolean
         mac_addr: string
 
         constructor() {
@@ -96,6 +97,7 @@ namespace cw01 {
             this.timer_enable = true
             this.sending_payload = false
             this.sending_pingreq = false
+            this.receiving_msg = false
             this.mac_addr = ""
         }
     }
@@ -651,6 +653,11 @@ namespace cw01 {
     export function IoTMQTTSendPayload(payload: string, Topic: string): void {
 
         cw01_mqtt_vars.timer_enable = false
+
+        while (cw01_mqtt_vars.sending_pingreq || cw01_mqtt_vars.receiving_msg) {
+            basic.pause(100)
+        }
+
         cw01_mqtt_vars.sending_payload = true
 
         //Msg part two
@@ -764,9 +771,11 @@ namespace cw01 {
         let payload: string
 
         cw01_mqtt_vars.sending_payload.toString()
-        while (cw01_mqtt_vars.sending_payload && cw01_mqtt_vars.sending_pingreq) {
+        while (cw01_mqtt_vars.sending_payload || cw01_mqtt_vars.sending_pingreq) {
             basic.pause(10)
         }
+
+        cw01_mqtt_vars.receiving_msg = true
 
         serial.writeString("AT+CIPRECVDATA=4" + cw01_vars.NEWLINE)
         basic.pause(200)
@@ -813,6 +822,8 @@ namespace cw01 {
         }
 
         basic.pause(100)
+
+        cw01_mqtt_vars.receiving_msg = false
     }
 
 
