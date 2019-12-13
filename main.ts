@@ -675,7 +675,9 @@ namespace cw01 {
         serial.writeString(topic)
         serial.writeString(value)
 
-        basic.pause(10000)
+        while (!(serial.readString().includes("SEND OK"))) {
+            basic.pause(100)
+        }
         cw01_mqtt_vars.sending_payload = false
 
     }
