@@ -333,6 +333,12 @@ namespace cw01 {
     //% group="ATT"
     //% blockId="IoTgetATTAssetValue" block="CW01 get ATT asset %asset value"
     export function IoTgetATTAssetValue(asset: string): string {
+        while (cw01_button_object.sending_data) {
+            basic.pause(100)
+        }
+
+        cw01_button_object.sending_data = true
+
         cw01_vars.res = ""
         let index1: number
         let index2: number
@@ -345,18 +351,11 @@ namespace cw01 {
             "Accept: */*" + cw01_vars.NEWLINE +
             "Authorization: Bearer " + cw01_vars.TOKEN + cw01_vars.NEWLINE + cw01_vars.NEWLINE
 
-        basic.showLeds(`
-        . . . . .
-        . . . . .
-        # . # . #
-        . . . . .
-        . . . . .
-        `)
 
         serial.writeString("AT+CIPSEND=" + (request.length + 2).toString() + cw01_vars.NEWLINE)
-        basic.pause(400)
+        basic.pause(50)
         serial.writeString(request + cw01_vars.NEWLINE)
-        basic.pause(400)
+        basic.pause(1200)
         serial.writeString("AT+CIPRECVDATA=200" + cw01_vars.NEWLINE)
         basic.pause(100)
         serial.readString()
@@ -368,7 +367,10 @@ namespace cw01 {
         index2 = cw01_vars.res.indexOf("}", index1)
         value = cw01_vars.res.substr(index1, index2 - index1)
 
+        cw01_button_object.sending_data = false
+
         return value
+
     }
 
     /**
