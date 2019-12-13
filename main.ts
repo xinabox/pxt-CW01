@@ -227,23 +227,14 @@ namespace cw01 {
             "Content-Type:application/json" + cw01_vars.NEWLINE +
             "Content-Length: " + (payload.length).toString() + cw01_vars.NEWLINE + cw01_vars.NEWLINE + payload + cw01_vars.NEWLINE
 
-        basic.showLeds(`
-        . . . . .
-        . . . . .
-        # . # . #
-        . . . . .
-        . . . . .
-        `)
 
         serial.writeString("AT+CIPSEND=" + (request.length + 2).toString() + cw01_vars.NEWLINE)
-        basic.pause(100)
+        basic.pause(50)
         serial.writeString(request + cw01_vars.NEWLINE)
-        basic.pause(10)
-        serial.readString()
         basic.pause(1000)
 
+        serial.readString()
         get_status()
-        basic.pause(1000)
 
         cw01_button_object.sending_data = false
 
@@ -276,24 +267,13 @@ namespace cw01 {
             "Content-Length: " + (payload.length).toString() + cw01_vars.NEWLINE + cw01_vars.NEWLINE + payload + cw01_vars.NEWLINE
 
 
-        basic.showLeds(`
-        . . . . .
-        . . . . .
-        # . # . #
-        . . . . .
-        . . . . .
-        `)
-
         serial.writeString("AT+CIPSEND=" + (request.length + 2).toString() + cw01_vars.NEWLINE)
-        basic.pause(100)
+        basic.pause(50)
         serial.writeString(request + cw01_vars.NEWLINE)
-        basic.pause(10)
+        basic.pause(1000)
+
         serial.readString()
-        basic.pause(1000)
-
         get_status()
-
-        basic.pause(1000)
 
         cw01_button_object.sending_data = false
     }
@@ -333,24 +313,13 @@ namespace cw01 {
             "Content-Length: " + (payload.length).toString() + cw01_vars.NEWLINE + cw01_vars.NEWLINE + payload + cw01_vars.NEWLINE
 
 
-        basic.showLeds(`
-        . . . . .
-        . . . . .
-        # . # . #
-        . . . . .
-        . . . . .
-        `)
-
         serial.writeString("AT+CIPSEND=" + (request.length + 2).toString() + cw01_vars.NEWLINE)
-        basic.pause(100)
+        basic.pause(50)
         serial.writeString(request + cw01_vars.NEWLINE)
-        basic.pause(10)
+        basic.pause(1000)
+
         serial.readString()
-        basic.pause(1000)
-
         get_status()
-
-        basic.pause(1000)
 
         cw01_button_object.sending_data = false
 
