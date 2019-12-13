@@ -1,6 +1,6 @@
 {
     "name": "pxt-cw01",
-    "version": "0.0.425",
+    "version": "0.0.426",
     "description": "",
     "dependencies": {
         "core": "*",
