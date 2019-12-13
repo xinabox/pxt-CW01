@@ -231,7 +231,7 @@ namespace cw01 {
         serial.writeString("AT+CIPSEND=" + (request.length + 2).toString() + cw01_vars.NEWLINE)
         basic.pause(50)
         serial.writeString(request + cw01_vars.NEWLINE)
-        basic.pause(1000)
+        basic.pause(500)
 
         serial.readString()
         get_status()
@@ -270,7 +270,7 @@ namespace cw01 {
         serial.writeString("AT+CIPSEND=" + (request.length + 2).toString() + cw01_vars.NEWLINE)
         basic.pause(50)
         serial.writeString(request + cw01_vars.NEWLINE)
-        basic.pause(1000)
+        basic.pause(500)
 
         serial.readString()
         get_status()
@@ -316,7 +316,7 @@ namespace cw01 {
         serial.writeString("AT+CIPSEND=" + (request.length + 2).toString() + cw01_vars.NEWLINE)
         basic.pause(50)
         serial.writeString(request + cw01_vars.NEWLINE)
-        basic.pause(1000)
+        basic.pause(500)
 
         serial.readString()
         get_status()
