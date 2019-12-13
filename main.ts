@@ -613,7 +613,7 @@ namespace cw01 {
         control.inBackground(function () {
             while (true) {
                 basic.pause(30000)
-                if (((input.runningTime() - cw01_vars.timer) > 180000) && !cw01_mqtt_vars.sending_payload) {
+                if (((input.runningTime() - cw01_vars.timer) > 180000) && !cw01_mqtt_vars.sending_payload && !cw01_mqtt_vars.receiving_msg) {
                     cw01_mqtt_vars.sending_pingreq = true
                     cw01_vars.timer = input.runningTime()
                     let header_one: Buffer = pins.packBuffer("!B", [0xC0])
