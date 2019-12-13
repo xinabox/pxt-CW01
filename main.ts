@@ -761,7 +761,7 @@ namespace cw01 {
         let payload: string
 
         cw01_mqtt_vars.sending_payload.toString()
-        while (cw01_mqtt_vars.sending_payload || cw01_mqtt_vars.sending_pingreq) {
+        while (cw01_mqtt_vars.sending_payload && cw01_mqtt_vars.sending_pingreq) {
             basic.pause(10)
         }
 
