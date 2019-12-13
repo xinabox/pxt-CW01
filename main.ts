@@ -666,6 +666,8 @@ namespace cw01 {
 
         basic.pause(200)
 
+        serial.readString()
+
         basic.showIcon(IconNames.Target)
 
         serial.writeBuffer(start_byte)
@@ -674,8 +676,6 @@ namespace cw01 {
         serial.writeBuffer(topic_len)
         serial.writeString(topic)
         serial.writeString(value)
-
-        serial.readString()
 
         let send_ok: string = ""
 
