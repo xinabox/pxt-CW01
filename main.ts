@@ -81,6 +81,7 @@ namespace cw01 {
         id_enable: boolean
         timer_enable: boolean
         sending_payload: boolean
+        sending_pingreq: boolean
         mac_addr: string
 
         constructor() {
@@ -94,6 +95,7 @@ namespace cw01 {
             this.id_enable = false
             this.timer_enable = true
             this.sending_payload = false
+            this.sending_pingreq = false
             this.mac_addr = ""
         }
     }
@@ -609,7 +611,8 @@ namespace cw01 {
         control.inBackground(function () {
             while (true) {
                 basic.pause(30000)
-                if (((input.runningTime() - cw01_vars.timer) > 180000) && cw01_mqtt_vars.timer_enable) {
+                if (((input.runningTime() - cw01_vars.timer) > 180000) && !cw01_mqtt_vars.sending_payload) {
+                    cw01_mqtt_vars.sending_pingreq = true
                     cw01_vars.timer = input.runningTime()
                     let header_one: Buffer = pins.packBuffer("!B", [0xC0])
                     let header_two: Buffer = pins.packBuffer("!B", [0x00])
@@ -619,6 +622,8 @@ namespace cw01 {
 
                     serial.writeBuffer(header_one)
                     serial.writeBuffer(header_two)
+
+                    cw01_mqtt_vars.sending_pingreq = false
                 }
 
 
@@ -756,7 +761,7 @@ namespace cw01 {
         let payload: string
 
         cw01_mqtt_vars.sending_payload.toString()
-        while (cw01_mqtt_vars.sending_payload) {
+        while (cw01_mqtt_vars.sending_payload || cw01_mqtt_vars.sending_pingreq) {
             basic.pause(10)
         }
 
