@@ -675,6 +675,8 @@ namespace cw01 {
         serial.writeString(topic)
         serial.writeString(value)
 
+        serial.readString()
+
         while (!(serial.readString().includes("SEND OK"))) {
             basic.pause(100)
         }
