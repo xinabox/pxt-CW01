@@ -680,7 +680,7 @@ namespace cw01 {
         let send_ok: string = ""
 
         while (!(send_ok.includes("SEND OK"))) {
-            basic.pause(300)
+            basic.pause(1)
             send_ok = serial.readString()
             basic.showString(send_ok)
         }
