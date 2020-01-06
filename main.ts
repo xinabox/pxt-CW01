@@ -745,10 +745,11 @@ namespace cw01 {
             serial.onDataReceived("\n", function () {
                 let serial_res: string = serial.readString()
 
-                if (serial_res.includes("IPD") && !serial_res.includes("+IPD,2")) {
+                if (serial_res.includes("IPD")) {
                     IoTMQTTGetData()
                     //if (cw01_mqtt_vars.enable_event_1 || cw01_mqtt_vars.enable_event_2)
-                    handler()
+                    if (!serial_res.includes("+IPD,2"))
+                        handler()
                 }
             })
         })
@@ -790,8 +791,8 @@ namespace cw01 {
         basic.pause(200)
 
         cw01_vars.mqtt_message = serial.readString()
-        basic.showIcon(IconNames.Yes)
-        basic.showString("")
+        //basic.showIcon(IconNames.Yes)
+        //basic.showString("")
 
         for (let i: number = 0; i < cw01_vars.topics.length; i++) {
             if (cw01_vars.mqtt_message.includes(cw01_vars.topics[i])) {
