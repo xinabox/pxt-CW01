@@ -745,7 +745,7 @@ namespace cw01 {
             serial.onDataReceived("\n", function () {
                 let serial_res: string = serial.readString()
 
-                if (serial_res.includes("IPD") && !serial_res.includes("Recv 2 bytes")) {
+                if (serial_res.includes("IPD") && !serial_res.includes("+IPD,2")) {
                     IoTMQTTGetData()
                     //if (cw01_mqtt_vars.enable_event_1 || cw01_mqtt_vars.enable_event_2)
                     handler()
