@@ -396,6 +396,13 @@ namespace cw01 {
     //% group="Ubidots"
     //% blockId="IoTgetValuefromUbidots" block="CW01 get value from Ubidots device %device variable %variable"
     export function IoTgetValuefromUbidots(device: string, variable: string): string {
+
+        while (cw01_button_object.sending_data) {
+            basic.pause(100)
+        }
+
+        cw01_button_object.sending_data = true
+
         cw01_vars.res = ""
         let value: string
         let index1: number
@@ -439,6 +446,8 @@ namespace cw01 {
         index2 = cw01_vars.res.indexOf("]", index1)
         value = cw01_vars.res.substr(index1, index2 - index1 - 1)
 
+        cw01_button_object.sending_data = false
+
         return value
 
     }
@@ -451,6 +460,12 @@ namespace cw01 {
     //% group="Ubidots"
     //% blockId="IoTSendValueToUbidots" block="CW01 send value %value to Ubidots device %device variable %variable , include location %loc"
     export function IoTSendValueToUbidots(value: number, device: string, variable: string, loc: boolean): void {
+
+        while (cw01_button_object.sending_data) {
+            basic.pause(100)
+        }
+
+        cw01_button_object.sending_data = true
 
         let payload: string = "{\"value\": " + value.toString() + "}"
 
@@ -487,6 +502,8 @@ namespace cw01 {
         serial.writeString("AT+CIPRECVDATA=400" + cw01_vars.NEWLINE)
         basic.pause(100)
         serial.readString()
+
+        cw01_button_object.sending_data = false
     }
 
     /**
