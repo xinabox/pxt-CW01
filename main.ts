@@ -811,21 +811,23 @@ namespace cw01 {
 
         if (cw01_mqtt_vars.prev_payload.compare(cw01_vars.mqtt_payload) != 0) {
             cw01_mqtt_vars.enable_event_1 = true
-            cw01_mqtt_vars.new_payload = cw01_vars.mqtt_payload
-            cw01_mqtt_vars.prev_payload = cw01_vars.mqtt_payload
         } else {
             cw01_mqtt_vars.enable_event_1 = false
             //cw01_mqtt_vars.new_payload = " "
         }
 
+        cw01_mqtt_vars.new_payload = cw01_vars.mqtt_payload
+        cw01_mqtt_vars.prev_payload = cw01_vars.mqtt_payload
+
         if (cw01_mqtt_vars.prev_topic.compare(cw01_vars.topic_rcv) != 0) {
             cw01_mqtt_vars.enable_event_2 = true
-            cw01_mqtt_vars.new_topic = cw01_vars.topic_rcv
-            cw01_mqtt_vars.prev_topic = cw01_vars.topic_rcv
         } else {
             cw01_mqtt_vars.enable_event_2 = false
             //cw01_mqtt_vars.new_topic = " "
         }
+
+        cw01_mqtt_vars.new_topic = cw01_vars.topic_rcv
+        cw01_mqtt_vars.prev_topic = cw01_vars.topic_rcv
 
         basic.pause(100)
 
