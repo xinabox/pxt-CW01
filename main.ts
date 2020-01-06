@@ -563,8 +563,8 @@ namespace cw01 {
     }
 
     /**
-     * Connect to MQTT broker through port number 1883
-     */
+    * Connect to MQTT broker through port number 1883
+    */
     //% weight=91
     //% group="MQTT"
     //% blockId="IoTMQTTConnect" block="CW01 connect to MQTT broker URL %broker with username %Username and password %Password"
@@ -647,8 +647,8 @@ namespace cw01 {
     }
 
     /**
-     * Set client ID of microbit
-     */
+    * Set client ID of microbit
+    */
     //% weight=91
     //% group="MQTT"
     //% blockId="IoTMQTTSetClientID" block="CW01 set MQTT client ID %ID"
@@ -660,8 +660,8 @@ namespace cw01 {
 
 
     /**
-     * Send payload to MQTT topic
-     */
+    * Send payload to MQTT topic
+    */
     //% weight=91
     //% group="MQTT"
     //% blockId="IoTMQTTSendPayload" block="CW01 send payload %payload to topic %Topic"
@@ -705,8 +705,8 @@ namespace cw01 {
     }
 
     /**
-     * Subscribe to MQTT topic
-     */
+    * Subscribe to MQTT topic
+    */
     //% weight=91
     //% group="MQTT"
     //% blockId="IoTMQTTSubscribe" block="CW01 subscribe to topic %Topic"
@@ -746,8 +746,8 @@ namespace cw01 {
     }
 
     /**
-     * The function is a callback function. It executes block inside the function whenever
-     */
+    * The function is a callback function. It executes block inside the function whenever
+    */
     //% weight=91
     //% group="MQTT"
     //% block="CW01 on message received"
@@ -773,6 +773,9 @@ namespace cw01 {
     }
 
 
+    /**
+    * Payload received 
+    */
     //% weight=91
     //% group="MQTT"
     //% blockId="IoTMQTTGetLatestData" block="payload"
@@ -782,6 +785,9 @@ namespace cw01 {
 
     }
 
+    /**
+    * Topic received 
+    */
     //% weight=91
     //% group="MQTT"
     //% blockId="IoTMQTTGetLatestTopic" block="topic"
