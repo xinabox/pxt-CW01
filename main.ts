@@ -735,8 +735,8 @@ namespace cw01 {
 
     //% weight=91
     //% group="MQTT"
-    //% block="CW01 on subscription"
-    export function callback(handler: () => void) {
+    //% block="CW01 on message received"
+    export function onMessageReceived(handler: () => void) {
 
         control.onEvent(EventBusSource.MICROBIT_ID_BUTTON_AB, EventBusValue.MICROBIT_BUTTON_EVT_CLICK, function () {
 
@@ -815,7 +815,7 @@ namespace cw01 {
             cw01_mqtt_vars.prev_payload = cw01_vars.mqtt_payload
         } else {
             cw01_mqtt_vars.enable_event_1 = false
-            cw01_mqtt_vars.new_payload = " "
+            //cw01_mqtt_vars.new_payload = " "
         }
 
         if (cw01_mqtt_vars.prev_topic.compare(cw01_vars.topic_rcv) != 0) {
@@ -824,7 +824,7 @@ namespace cw01 {
             cw01_mqtt_vars.prev_topic = cw01_vars.topic_rcv
         } else {
             cw01_mqtt_vars.enable_event_2 = false
-            cw01_mqtt_vars.new_topic = " "
+            //cw01_mqtt_vars.new_topic = " "
         }
 
         basic.pause(100)
