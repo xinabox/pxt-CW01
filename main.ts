@@ -503,7 +503,7 @@ namespace cw01 {
         basic.pause(100)
         serial.readString()
 
-        cw01_button_object.sending_data = false
+        cw01_button_object.sending_data = false;
     }
 
     /**
