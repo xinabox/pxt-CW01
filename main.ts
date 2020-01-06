@@ -746,7 +746,7 @@ namespace cw01 {
     }
 
     /**
-    * The function is a callback function. It executes block inside the function whenever
+    * The function is a callback function. It executes block inside the function whenever message from subscribed topic is received
     */
     //% weight=91
     //% group="MQTT"
