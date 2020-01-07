@@ -1015,7 +1015,7 @@ namespace cw01 {
 
     function get_status(): boolean {
 
-        basic.pause(200)
+        basic.pause(400)
         serial.writeString("AT+CIPRECVDATA=200" + cw01_vars.NEWLINE)
         basic.pause(300)
         cw01_vars.res = serial.readString()
