@@ -38,8 +38,6 @@ namespace cw01 {
         att_state_value: boolean
         att_asset: string
         mqtt_message: string
-        server_closed: boolean
-
         constructor() {
             this.res = ""
             this.TOKEN = ""
@@ -68,7 +66,6 @@ namespace cw01 {
             this.att_state_value = false
             this.att_asset = ""
             this.mqtt_message = ""
-            this.server_closed = false
         }
     }
 
@@ -498,12 +495,18 @@ namespace cw01 {
         serial.writeString(request)
         basic.pause(1000)
 
-        if (!get_status() && cw01_vars.server_closed) {
-            cw01_vars.server_closed = false
-            if (cw01_vars.select) {
-                connectToUbidots(USER.INDUSTRIAL, cw01_vars.TOKEN)
-            } else {
-                connectToUbidots(USER.EDUCATIONAL, cw01_vars.TOKEN)
+        if (!get_status()) {
+            cw01_vars.fail_count += 1
+            if (cw01_vars.fail_count >= 3) {
+                if (cw01_vars.select) {
+                    cw01_vars.fail_count = 0
+                    basic.showString("Reconnecting...")
+                    connectToUbidots(USER.INDUSTRIAL, cw01_vars.TOKEN)
+                } else {
+                    cw01_vars.fail_count = 0
+                    basic.showString("Reconnecting...")
+                    connectToUbidots(USER.EDUCATIONAL, cw01_vars.TOKEN)
+                }
             }
         }
 
@@ -1021,10 +1024,6 @@ namespace cw01 {
             basic.showIcon(IconNames.Yes, 50)
             basic.showString("", 50)
             return true
-        } else if (cw01_vars.res.includes("CLOSED")) {
-            cw01_vars.server_closed = true
-            basic.showIcon(IconNames.Triangle)
-            return false
         } else {
             basic.showIcon(IconNames.No, 50)
             basic.showString("", 50)
