@@ -165,25 +165,24 @@ namespace cw01 {
     //% group="Common"
     //% blockId="connectToWifi" block="CW01 connect to WiFi SSID %SSID password %PSK"
     export function connectToWifi(SSID: string, PSK: string): void {
-        if (true) {
-            serial.writeString("AT+CWMODE=1" + cw01_vars.NEWLINE)
-            basic.pause(100)
-            serial.readString()
-            serial.writeString("AT+CWJAP=\"" + SSID + "\",\"" + PSK + "\"" + cw01_vars.NEWLINE)
-            basic.pause(200)
-            serial.readString()
-            basic.pause(10000)
-            cw01_vars.res = serial.readLine()
+        serial.writeString("AT+CWMODE=1" + cw01_vars.NEWLINE)
+        basic.pause(100)
+        serial.readString()
+        serial.writeString("AT+CWJAP=\"" + SSID + "\",\"" + PSK + "\"" + cw01_vars.NEWLINE)
+        basic.pause(200)
+        serial.readString()
 
-            if (cw01_vars.res.compare("WIFI CONNECTED\r") == 0) {
-                basic.showString("C")
-                cw01_vars.res = ""
-            } else {
-                basic.showString("D")
-            }
+        do {
+            cw01_vars.res = serial.readString()
+            basic.pause(1000)
+        } while (!cw01_vars.res.includes("WIFI CONNECTED"));
 
+        if (cw01_vars.res.includes("WIFI CONNECTED")) {
+            basic.pause(2000)
+            basic.showString("C")
+            cw01_vars.res = ""
         } else {
-            basic.showString("Missed begin block!")
+            basic.showString("D")
         }
     }
 
@@ -396,6 +395,8 @@ namespace cw01 {
     //% blockId="IoTgetValuefromUbidots" block="CW01 get value from Ubidots device %device variable %variable"
     export function IoTgetValuefromUbidots(device: string, variable: string): string {
 
+        let ubi_connected: string = ""
+
         while (cw01_button_object.sending_data) {
             basic.pause(100)
         }
@@ -406,28 +407,44 @@ namespace cw01 {
         let value: string
         let index1: number
         let index2: number
-        let industrial: string = "industrial.api.ubidots.com"
-        let educational: string = "things.ubidots.com"
-        let server: string
-        if (cw01_vars.select) {
-            server = industrial
-        } else {
-            server = educational
-        }
-        let request: string = "GET /api/v1.6/devices/" + device + "/" + variable + "/values/?page_size=1 HTTP/1.1" + cw01_vars.NEWLINE +
-            "Host: " + server + cw01_vars.NEWLINE +
-            "User-Agent: CW01/1.0" + cw01_vars.NEWLINE +
-            "Accept: */*" + cw01_vars.NEWLINE +
-            "X-Auth-Token: " + cw01_vars.TOKEN + cw01_vars.NEWLINE +
-            "Content-Type: application/json" + cw01_vars.NEWLINE + cw01_vars.NEWLINE
-        //"Content-Length: " + (payload.length).toString() + NEWLINE + NEWLINE + payload + NEWLINE
+
+        do {
+
+            let industrial: string = "industrial.api.ubidots.com"
+            let educational: string = "things.ubidots.com"
+            let server: string
+            if (cw01_vars.select) {
+                server = industrial
+            } else {
+                server = educational
+            }
+            let request: string = "GET /api/v1.6/devices/" + device + "/" + variable + "/values/?page_size=1 HTTP/1.1" + cw01_vars.NEWLINE +
+                "Host: " + server + cw01_vars.NEWLINE +
+                "User-Agent: CW01/1.0" + cw01_vars.NEWLINE +
+                "Accept: */*" + cw01_vars.NEWLINE +
+                "X-Auth-Token: " + cw01_vars.TOKEN + cw01_vars.NEWLINE +
+                "Content-Type: application/json" + cw01_vars.NEWLINE + cw01_vars.NEWLINE
 
 
 
-        serial.writeString("AT+CIPSEND=" + (request.length).toString() + cw01_vars.NEWLINE)
-        basic.pause(400)
-        serial.writeString(request)
-        basic.pause(1000)
+            serial.writeString("AT+CIPSEND=" + (request.length).toString() + cw01_vars.NEWLINE)
+            basic.pause(400)
+            serial.writeString(request)
+            basic.pause(1000)
+
+            ubi_connected = serial.readString()
+
+            if (ubi_connected.includes("link is not valid")) {
+                if (cw01_vars.select) {
+                    connectToUbidots(USER.INDUSTRIAL, cw01_vars.TOKEN)
+                } else {
+                    connectToUbidots(USER.EDUCATIONAL, cw01_vars.TOKEN)
+                }
+            } else {
+                ubi_connected = ""
+            }
+
+        } while (ubi_connected.includes("link is not valid"));
 
         serial.writeString("AT+CIPRECVDATA=200" + cw01_vars.NEWLINE)
         basic.pause(400)
@@ -460,60 +477,67 @@ namespace cw01 {
     //% blockId="IoTSendValueToUbidots" block="CW01 send value %value to Ubidots device %device variable %variable , include location %loc"
     export function IoTSendValueToUbidots(value: number, device: string, variable: string, loc: boolean): void {
 
+        let ubi_connected: string = ""
+        let value_store: number = value
+
         while (cw01_button_object.sending_data) {
             basic.pause(100)
         }
 
         cw01_button_object.sending_data = true
 
-        let payload: string = "{\"value\": " + value.toString() + "}"
+        do {
 
-        if (loc) {
-            payload = "{\"value\": " + value.toString() + ", \"context\": {\"lat\": " + cw01_vars.latitude.toString() + ", \"lng\": " + cw01_vars.longitude.toString() + "}}"
-        }
+            let payload: string = "{\"value\": " + value.toString() + "}"
 
-        let industrial: string = "industrial.api.ubidots.com"
-        let educational: string = "things.ubidots.com"
-        let server: string
-        if (cw01_vars.select) {
-            server = industrial
-        } else {
-            server = educational
-        }
-        let request: string = "POST /api/v1.6/devices/" + device + "/" + variable + "/values HTTP/1.1" + cw01_vars.NEWLINE +
-            "Host: " + server + cw01_vars.NEWLINE +
-            "User-Agent: CW01/1.0" + cw01_vars.NEWLINE +
-            "X-Auth-Token: " + cw01_vars.TOKEN + cw01_vars.NEWLINE +
-            "Content-Type: application/json" + cw01_vars.NEWLINE +
-            "Accept: */*" + cw01_vars.NEWLINE +
-            "Content-Length: " + (payload.length).toString() + cw01_vars.NEWLINE + cw01_vars.NEWLINE + payload + cw01_vars.NEWLINE
+            if (loc) {
+                payload = "{\"value\": " + value.toString() + ", \"context\": {\"lat\": " + cw01_vars.latitude.toString() + ", \"lng\": " + cw01_vars.longitude.toString() + "}}"
+            }
+
+            let industrial: string = "industrial.api.ubidots.com"
+            let educational: string = "things.ubidots.com"
+            let server: string
+            if (cw01_vars.select) {
+                server = industrial
+            } else {
+                server = educational
+            }
+            let request: string = "POST /api/v1.6/devices/" + device + "/" + variable + "/values HTTP/1.1" + cw01_vars.NEWLINE +
+                "Host: " + server + cw01_vars.NEWLINE +
+                "User-Agent: CW01/1.0" + cw01_vars.NEWLINE +
+                "X-Auth-Token: " + cw01_vars.TOKEN + cw01_vars.NEWLINE +
+                "Content-Type: application/json" + cw01_vars.NEWLINE +
+                "Connection: keep-alive" + cw01_vars.NEWLINE +
+                "Accept: */*" + cw01_vars.NEWLINE +
+                "Content-Length: " + (payload.length).toString() + cw01_vars.NEWLINE + cw01_vars.NEWLINE + payload + cw01_vars.NEWLINE
 
 
+            serial.writeString("AT+CIPSEND=" + (request.length).toString() + cw01_vars.NEWLINE)
+            basic.pause(300)
+            serial.writeString(request)
+            basic.pause(1000)
 
-        serial.writeString("AT+CIPSEND=" + (request.length).toString() + cw01_vars.NEWLINE)
-        basic.pause(100)
-        serial.writeString(request)
-        basic.pause(1000)
+            ubi_connected = serial.readString()
 
-        if (!get_status()) {
-            cw01_vars.fail_count += 1
-            if (cw01_vars.fail_count >= 3) {
+            if (ubi_connected.includes("link is not valid")) {
                 if (cw01_vars.select) {
-                    cw01_vars.fail_count = 0
-                    basic.showString("Reconnecting...")
                     connectToUbidots(USER.INDUSTRIAL, cw01_vars.TOKEN)
                 } else {
-                    cw01_vars.fail_count = 0
-                    basic.showString("Reconnecting...")
                     connectToUbidots(USER.EDUCATIONAL, cw01_vars.TOKEN)
                 }
+            } else {
+                ubi_connected = ""
             }
-        }
 
-        basic.pause(100)
-        serial.writeString("AT+CIPRECVDATA=400" + cw01_vars.NEWLINE)
-        basic.pause(100)
-        serial.readString()
+            get_status()
+
+
+            basic.pause(100)
+            serial.writeString("AT+CIPRECVDATA=400" + cw01_vars.NEWLINE)
+            basic.pause(100)
+            serial.readString()
+
+        } while (ubi_connected.includes("link is not valid"));
 
         cw01_button_object.sending_data = false;
     }
