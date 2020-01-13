@@ -390,7 +390,7 @@ namespace cw01 {
 
             cw01_vars.asset_name = asset
             basic.pause(100)
-            let request: string = "GET /device/" + cw01_vars.DEVICE_ID + "/asset/" + cw01_vars.asset_name + "/feed" + " HTTP/1.1" + cw01_vars.NEWLINE +
+            let request: string = "GET /device/" + cw01_vars.DEVICE_ID + "/asset/" + cw01_vars.asset_name + "/state" + " HTTP/1.1" + cw01_vars.NEWLINE +
                 "Host: api.allthingstalk.io" + cw01_vars.NEWLINE +
                 "User-Agent: CW01/1.0" + cw01_vars.NEWLINE +
                 "Accept: */*" + cw01_vars.NEWLINE +
