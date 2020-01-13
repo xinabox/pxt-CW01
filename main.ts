@@ -208,31 +208,45 @@ namespace cw01 {
     //% blockId="IoTSendStringToATT" block="CW01 send string %value to ATT asset %asset"
     export function IoTSendStringToATT(value: string, asset: string): void {
 
+        let att_connected: string = ""
+
         while (cw01_button_object.sending_data) {
             basic.pause(100)
         }
 
         cw01_button_object.sending_data = true
-        cw01_vars.asset_name = asset
-        serial.writeString("AT+CIPMODE=0" + cw01_vars.NEWLINE)
-        basic.pause(100)
-        let payload: string = "{\"value\": " + value + "}"
-        let request: string = "PUT /device/" + cw01_vars.DEVICE_ID + "/asset/" + cw01_vars.asset_name + "/state" + " HTTP/1.1" + cw01_vars.NEWLINE +
-            "Host: api.allthingstalk.io" + cw01_vars.NEWLINE +
-            "User-Agent: CW01/1.0" + cw01_vars.NEWLINE +
-            "Accept: */*" + cw01_vars.NEWLINE +
-            "Authorization: Bearer " + cw01_vars.TOKEN + cw01_vars.NEWLINE +
-            "Content-Type:application/json" + cw01_vars.NEWLINE +
-            "Content-Length: " + (payload.length).toString() + cw01_vars.NEWLINE + cw01_vars.NEWLINE + payload + cw01_vars.NEWLINE
+
+        do {
+
+            cw01_vars.asset_name = asset
+            serial.writeString("AT+CIPMODE=0" + cw01_vars.NEWLINE)
+            basic.pause(100)
+            let payload: string = "{\"value\": " + value + "}"
+            let request: string = "PUT /device/" + cw01_vars.DEVICE_ID + "/asset/" + cw01_vars.asset_name + "/state" + " HTTP/1.1" + cw01_vars.NEWLINE +
+                "Host: api.allthingstalk.io" + cw01_vars.NEWLINE +
+                "User-Agent: CW01/1.0" + cw01_vars.NEWLINE +
+                "Accept: */*" + cw01_vars.NEWLINE +
+                "Authorization: Bearer " + cw01_vars.TOKEN + cw01_vars.NEWLINE +
+                "Content-Type:application/json" + cw01_vars.NEWLINE +
+                "Content-Length: " + (payload.length).toString() + cw01_vars.NEWLINE + cw01_vars.NEWLINE + payload + cw01_vars.NEWLINE
 
 
-        serial.writeString("AT+CIPSEND=" + (request.length + 2).toString() + cw01_vars.NEWLINE)
-        basic.pause(50)
-        serial.writeString(request + cw01_vars.NEWLINE)
-        basic.pause(1000)
+            serial.writeString("AT+CIPSEND=" + (request.length + 2).toString() + cw01_vars.NEWLINE)
+            basic.pause(50)
+            serial.writeString(request + cw01_vars.NEWLINE)
+            basic.pause(1000)
 
-        serial.readString()
-        get_status()
+            att_connected = serial.readString()
+
+            if (att_connected.includes("link is not valid")) {
+                connectToATT(cw01_vars.TOKEN, cw01_vars.DEVICE_ID)
+            } else {
+                att_connected = ""
+            }
+
+            get_status()
+
+        } while (att_connected.includes("link is not valid"))
 
         cw01_button_object.sending_data = false
 
@@ -246,32 +260,45 @@ namespace cw01 {
     //% blockId="IoTSendValueToATT" block="CW01 send value %value to ATT asset %asset"
     export function IoTSendValueToATT(value: number, asset: string): void {
 
+        let att_connected: string = ""
+
         while (cw01_button_object.sending_data) {
             basic.pause(100)
         }
 
         cw01_button_object.sending_data = true
 
-        cw01_vars.asset_name = asset
-        serial.writeString("AT+CIPMODE=0" + cw01_vars.NEWLINE)
-        basic.pause(100)
-        let payload: string = "{\"value\": " + value.toString() + "}"
-        let request: string = "PUT /device/" + cw01_vars.DEVICE_ID + "/asset/" + cw01_vars.asset_name + "/state" + " HTTP/1.1" + cw01_vars.NEWLINE +
-            "Host: api.allthingstalk.io" + cw01_vars.NEWLINE +
-            "User-Agent: CW01/1.0" + cw01_vars.NEWLINE +
-            "Accept: */*" + cw01_vars.NEWLINE +
-            "Authorization: Bearer " + cw01_vars.TOKEN + cw01_vars.NEWLINE +
-            "Content-Type:application/json" + cw01_vars.NEWLINE +
-            "Content-Length: " + (payload.length).toString() + cw01_vars.NEWLINE + cw01_vars.NEWLINE + payload + cw01_vars.NEWLINE
+        do {
+
+            cw01_vars.asset_name = asset
+            serial.writeString("AT+CIPMODE=0" + cw01_vars.NEWLINE)
+            basic.pause(100)
+            let payload: string = "{\"value\": " + value.toString() + "}"
+            let request: string = "PUT /device/" + cw01_vars.DEVICE_ID + "/asset/" + cw01_vars.asset_name + "/state" + " HTTP/1.1" + cw01_vars.NEWLINE +
+                "Host: api.allthingstalk.io" + cw01_vars.NEWLINE +
+                "User-Agent: CW01/1.0" + cw01_vars.NEWLINE +
+                "Accept: */*" + cw01_vars.NEWLINE +
+                "Authorization: Bearer " + cw01_vars.TOKEN + cw01_vars.NEWLINE +
+                "Content-Type:application/json" + cw01_vars.NEWLINE +
+                "Content-Length: " + (payload.length).toString() + cw01_vars.NEWLINE + cw01_vars.NEWLINE + payload + cw01_vars.NEWLINE
 
 
-        serial.writeString("AT+CIPSEND=" + (request.length + 2).toString() + cw01_vars.NEWLINE)
-        basic.pause(50)
-        serial.writeString(request + cw01_vars.NEWLINE)
-        basic.pause(1000)
+            serial.writeString("AT+CIPSEND=" + (request.length + 2).toString() + cw01_vars.NEWLINE)
+            basic.pause(50)
+            serial.writeString(request + cw01_vars.NEWLINE)
+            basic.pause(1000)
 
-        serial.readString()
-        get_status()
+            att_connected = serial.readString()
+
+            if (att_connected.includes("link is not valid")) {
+                connectToATT(cw01_vars.TOKEN, cw01_vars.DEVICE_ID)
+            } else {
+                att_connected = ""
+            }
+
+            get_status()
+
+        } while (att_connected.includes("link is not valid"))
 
         cw01_button_object.sending_data = false
     }
@@ -284,40 +311,54 @@ namespace cw01 {
     //% blockId="IoTSendStateToATT" block="CW01 send state %state to ATT asset %asset_name"
     export function IoTSendStateToATT(state: boolean, asset: string): void {
 
+        let att_connected: string = ""
+
         while (cw01_button_object.sending_data) {
             basic.pause(100)
         }
 
+
         cw01_button_object.sending_data = true
 
-        let stateStr: string
+        do {
 
-        if (state == true) {
-            stateStr = "true"
-        } else {
-            stateStr = "false"
-        }
+            let stateStr: string
 
-        cw01_vars.asset_name = asset
-        serial.writeString("AT+CIPMODE=0" + cw01_vars.NEWLINE)
-        basic.pause(100)
-        let payload: string = "{\"value\": " + stateStr + "}"
-        let request: string = "PUT /device/" + cw01_vars.DEVICE_ID + "/asset/" + cw01_vars.asset_name + "/state" + " HTTP/1.1" + cw01_vars.NEWLINE +
-            "Host: api.allthingstalk.io" + cw01_vars.NEWLINE +
-            "User-Agent: CW01/1.0" + cw01_vars.NEWLINE +
-            "Accept: */*" + cw01_vars.NEWLINE +
-            "Authorization: Bearer " + cw01_vars.TOKEN + cw01_vars.NEWLINE +
-            "Content-Type:application/json" + cw01_vars.NEWLINE +
-            "Content-Length: " + (payload.length).toString() + cw01_vars.NEWLINE + cw01_vars.NEWLINE + payload + cw01_vars.NEWLINE
+            if (state == true) {
+                stateStr = "true"
+            } else {
+                stateStr = "false"
+            }
+
+            cw01_vars.asset_name = asset
+            serial.writeString("AT+CIPMODE=0" + cw01_vars.NEWLINE)
+            basic.pause(100)
+            let payload: string = "{\"value\": " + stateStr + "}"
+            let request: string = "PUT /device/" + cw01_vars.DEVICE_ID + "/asset/" + cw01_vars.asset_name + "/state" + " HTTP/1.1" + cw01_vars.NEWLINE +
+                "Host: api.allthingstalk.io" + cw01_vars.NEWLINE +
+                "User-Agent: CW01/1.0" + cw01_vars.NEWLINE +
+                "Accept: */*" + cw01_vars.NEWLINE +
+                "Authorization: Bearer " + cw01_vars.TOKEN + cw01_vars.NEWLINE +
+                "Content-Type:application/json" + cw01_vars.NEWLINE +
+                "Content-Length: " + (payload.length).toString() + cw01_vars.NEWLINE + cw01_vars.NEWLINE + payload + cw01_vars.NEWLINE
 
 
-        serial.writeString("AT+CIPSEND=" + (request.length + 2).toString() + cw01_vars.NEWLINE)
-        basic.pause(50)
-        serial.writeString(request + cw01_vars.NEWLINE)
-        basic.pause(1000)
+            serial.writeString("AT+CIPSEND=" + (request.length + 2).toString() + cw01_vars.NEWLINE)
+            basic.pause(50)
+            serial.writeString(request + cw01_vars.NEWLINE)
+            basic.pause(1000)
 
-        serial.readString()
-        get_status()
+            att_connected = serial.readString()
+
+            if (att_connected.includes("link is not valid")) {
+                connectToATT(cw01_vars.TOKEN, cw01_vars.DEVICE_ID)
+            } else {
+                att_connected = ""
+            }
+
+            get_status()
+
+        } while (att_connected.includes("link is not valid"))
 
         cw01_button_object.sending_data = false
 
