@@ -372,39 +372,58 @@ namespace cw01 {
     //% group="ATT"
     //% blockId="IoTgetATTAssetValue" block="CW01 get ATT asset %asset value"
     export function IoTgetATTAssetValue(asset: string): string {
+        let att_connected: string = ""
+
         while (cw01_button_object.sending_data) {
             basic.pause(100)
         }
 
         cw01_button_object.sending_data = true
 
+
         cw01_vars.res = ""
         let index1: number
         let index2: number
         let value: string
-        cw01_vars.asset_name = asset
-        basic.pause(100)
-        let request: string = "GET /device/" + cw01_vars.DEVICE_ID + "/asset/" + cw01_vars.asset_name + "/state" + " HTTP/1.1" + cw01_vars.NEWLINE +
-            "Host: api.allthingstalk.io" + cw01_vars.NEWLINE +
-            "User-Agent: CW01/1.0" + cw01_vars.NEWLINE +
-            "Accept: */*" + cw01_vars.NEWLINE +
-            "Authorization: Bearer " + cw01_vars.TOKEN + cw01_vars.NEWLINE + cw01_vars.NEWLINE
+
+        do {
+
+            cw01_vars.asset_name = asset
+            basic.pause(100)
+            let request: string = "GET /device/" + cw01_vars.DEVICE_ID + "/asset/" + cw01_vars.asset_name + "/state" + " HTTP/1.1" + cw01_vars.NEWLINE +
+                "Host: api.allthingstalk.io" + cw01_vars.NEWLINE +
+                "User-Agent: CW01/1.0" + cw01_vars.NEWLINE +
+                "Accept: */*" + cw01_vars.NEWLINE +
+                "Authorization: Bearer " + cw01_vars.TOKEN + cw01_vars.NEWLINE + cw01_vars.NEWLINE
 
 
-        serial.writeString("AT+CIPSEND=" + (request.length + 2).toString() + cw01_vars.NEWLINE)
-        basic.pause(50)
-        serial.writeString(request + cw01_vars.NEWLINE)
-        basic.pause(1200)
-        serial.writeString("AT+CIPRECVDATA=200" + cw01_vars.NEWLINE)
-        basic.pause(100)
-        serial.readString()
-        basic.pause(400)
-        serial.writeString("AT+CIPRECVDATA=200" + cw01_vars.NEWLINE)
-        basic.pause(400)
-        cw01_vars.res += serial.readString()
-        index1 = cw01_vars.res.indexOf("\"value\":") + "\"value\":".length
-        index2 = cw01_vars.res.indexOf("}", index1)
-        value = cw01_vars.res.substr(index1, index2 - index1)
+            serial.writeString("AT+CIPSEND=" + (request.length + 2).toString() + cw01_vars.NEWLINE)
+            basic.pause(50)
+            serial.writeString(request + cw01_vars.NEWLINE)
+            basic.pause(1200)
+
+            att_connected = serial.readString()
+
+            if (att_connected.includes("link is not valid")) {
+                connectToATT(cw01_vars.TOKEN, cw01_vars.DEVICE_ID)
+            } else {
+                att_connected = ""
+            }
+
+            if (!att_connected.includes("link is not valid")) {
+                serial.writeString("AT+CIPRECVDATA=200" + cw01_vars.NEWLINE)
+                basic.pause(100)
+                serial.readString()
+                basic.pause(400)
+                serial.writeString("AT+CIPRECVDATA=200" + cw01_vars.NEWLINE)
+                basic.pause(400)
+                cw01_vars.res += serial.readString()
+                index1 = cw01_vars.res.indexOf("\"value\":") + "\"value\":".length
+                index2 = cw01_vars.res.indexOf("}", index1)
+                value = cw01_vars.res.substr(index1, index2 - index1)
+            }
+
+        } while (att_connected.includes("link is not valid"))
 
         cw01_button_object.sending_data = false
 
