@@ -370,7 +370,7 @@ namespace cw01 {
     */
     //% weight=91
     //% group="ATT"
-    //% blockId="IoTgetATTAssetValue" block="CW01 get ATT asset %asset command"
+    //% blockId="IoTgetATTAssetValue" block="CW01 get ATT asset %asset state"
     export function IoTgetATTAssetValue(asset: string): string {
         let att_connected: string = ""
 
