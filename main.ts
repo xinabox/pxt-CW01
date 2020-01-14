@@ -82,6 +82,7 @@ namespace cw01 {
         sending_payload: boolean
         sending_pingreq: boolean
         receiving_msg: boolean
+        mqtt_busy: boolean
         mac_addr: string
 
         constructor() {
@@ -98,6 +99,7 @@ namespace cw01 {
             this.sending_pingreq = false
             this.receiving_msg = false
             this.mac_addr = ""
+            this.mqtt_busy = false
         }
     }
 
@@ -782,7 +784,7 @@ namespace cw01 {
 
         cw01_mqtt_vars.timer_enable = false
 
-        while (cw01_mqtt_vars.sending_pingreq || cw01_mqtt_vars.receiving_msg) {
+        while (cw01_mqtt_vars.sending_pingreq || cw01_mqtt_vars.receiving_msg || cw01_mqtt_vars.mqtt_busy) {
             basic.pause(100)
         }
 
@@ -825,15 +827,15 @@ namespace cw01 {
     //% blockId="IoTMQTTSubscribe" block="CW01 subscribe to topic %Topic"
     export function IoTMQTTSubscribe(Topic: string): void {
 
+        while (cw01_mqtt_vars.sending_pingreq || cw01_mqtt_vars.receiving_msg || cw01_mqtt_vars.mqtt_busy) {
+            basic.pause(100)
+        }
+
         //Msg part two
         let pid: Buffer = pins.packBuffer("!H", [0xDEAD])
         let qos: Buffer = pins.packBuffer("!B", [0x00])
         let topic: string = Topic
         let topic_len: Buffer = pins.packBuffer("!H", [topic.length])
-        cw01_vars.mqtt_topic = topic
-
-        cw01_vars.topics[cw01_vars.topic_count] = topic
-        cw01_vars.topic_count++
 
         //Msg part one
         let ctrl_pkt: Buffer = pins.packBuffer("!B", [0x82])
@@ -852,9 +854,18 @@ namespace cw01 {
 
         basic.pause(2000)
 
+        serial.readString()
+
+        /*serial.writeString("AT+CIPRECVDATA=1" + cw01_vars.NEWLINE)
+        basic.pause(100)
+        serial.readBuffer(17)
+        basic.showNumber((pins.unpackBuffer("!B", serial.readBuffer(1)))[0])*/
+
         serial.writeString("AT+CIPRECVDATA=200" + cw01_vars.NEWLINE)
         basic.pause(100)
         serial.readString()
+
+        basic.pause(100)
 
     }
 
@@ -868,19 +879,42 @@ namespace cw01 {
 
         control.onEvent(EventBusSource.MICROBIT_ID_BUTTON_AB, EventBusValue.MICROBIT_BUTTON_EVT_CLICK, function () {
 
-            basic.pause(10000)
-
-            basic.showString("#")
+            /*basic.pause(20000)
+ 
+            basic.showString("#")*/
 
             serial.onDataReceived("\n", function () {
+
+                while (cw01_mqtt_vars.sending_payload || cw01_mqtt_vars.sending_pingreq) {
+                    basic.pause(100)
+                }
+
+                cw01_mqtt_vars.mqtt_busy = true
+
                 let serial_res: string = serial.readString()
+                let ctrl_pkt: number
+                ctrl_pkt = 0
 
                 if (serial_res.includes("IPD")) {
-                    IoTMQTTGetData()
-                    //if (cw01_mqtt_vars.enable_event_1 || cw01_mqtt_vars.enable_event_2)
-                    if (!serial_res.includes("+IPD,2"))
+                    serial.readString()
+
+                    serial.writeString("AT+CIPRECVDATA=1" + cw01_vars.NEWLINE)
+                    basic.pause(100)
+                    serial.readBuffer(17)
+                    ctrl_pkt = (pins.unpackBuffer("!B", serial.readBuffer(1)))[0]
+
+                    if (ctrl_pkt == 48) {
+                        IoTMQTTGetData()
                         handler()
+                    } else if (ctrl_pkt == 208) {
+                        ctrl_pkt = 0
+                        serial.writeString("AT+CIPRECVDATA=200" + cw01_vars.NEWLINE)
+                        basic.pause(100)
+                    }
                 }
+
+                cw01_mqtt_vars.mqtt_busy = false
+
             })
         })
     }
@@ -911,62 +945,42 @@ namespace cw01 {
     }
 
     function IoTMQTTGetData(): void {
+        let topic_len_MSB: number[]
+        let topic_len_LSB: number[]
+        let topic_len: number = 0
+
         let payload: string
 
         cw01_mqtt_vars.sending_payload.toString()
         while (cw01_mqtt_vars.sending_payload || cw01_mqtt_vars.sending_pingreq) {
-            basic.pause(10)
+            basic.pause(100)
         }
 
         cw01_mqtt_vars.receiving_msg = true
 
-        serial.writeString("AT+CIPRECVDATA=4" + cw01_vars.NEWLINE)
+        serial.writeString("AT+CIPRECVDATA=1" + cw01_vars.NEWLINE)
         basic.pause(200)
         serial.readString()
+        serial.writeString("AT+CIPRECVDATA=1" + cw01_vars.NEWLINE)
+        basic.pause(200)
+        serial.readBuffer(17)
+        topic_len_MSB = pins.unpackBuffer("!B", serial.readBuffer(1))
+        serial.readString()
+        serial.writeString("AT+CIPRECVDATA=1" + cw01_vars.NEWLINE)
+        basic.pause(200)
+        serial.readBuffer(17)
+        topic_len_LSB = pins.unpackBuffer("!B", serial.readBuffer(1))
+        serial.readString()
+
+        topic_len = (topic_len_MSB[0] << 8) + topic_len_LSB[0]
+
         serial.writeString("AT+CIPRECVDATA=200" + cw01_vars.NEWLINE)
         basic.pause(200)
 
         cw01_vars.mqtt_message = serial.readString()
-        //basic.showIcon(IconNames.Yes)
-        //basic.showString("")
 
-        for (let i: number = 0; i < cw01_vars.topics.length; i++) {
-            if (cw01_vars.mqtt_message.includes(cw01_vars.topics[i])) {
-                cw01_vars.topic_rcv = cw01_vars.topics[i]
-                break
-            } else {
-                continue
-            }
-        }
-
-        let index: number = cw01_vars.mqtt_message.indexOf(cw01_vars.topic_rcv) + cw01_vars.topic_rcv.length
-        let payload_length: number = cw01_vars.mqtt_message.length - index - 6
-        payload = cw01_vars.mqtt_message.substr(index, payload_length)
-
-
-        cw01_vars.mqtt_payload = payload
-
-        if (cw01_mqtt_vars.prev_payload.compare(cw01_vars.mqtt_payload) != 0) {
-            cw01_mqtt_vars.enable_event_1 = true
-        } else {
-            cw01_mqtt_vars.enable_event_1 = false
-            //cw01_mqtt_vars.new_payload = " "
-        }
-
-        cw01_mqtt_vars.new_payload = cw01_vars.mqtt_payload
-        //cw01_mqtt_vars.prev_payload = cw01_vars.mqtt_payload
-
-        if (cw01_mqtt_vars.prev_topic.compare(cw01_vars.topic_rcv) != 0) {
-            cw01_mqtt_vars.enable_event_2 = true
-        } else {
-            cw01_mqtt_vars.enable_event_2 = false
-            //cw01_mqtt_vars.new_topic = " "
-        }
-
-        cw01_mqtt_vars.new_topic = cw01_vars.topic_rcv
-        //cw01_mqtt_vars.prev_topic = cw01_vars.topic_rcv
-
-        basic.pause(100)
+        cw01_mqtt_vars.new_topic = cw01_vars.mqtt_message.substr(cw01_vars.mqtt_message.indexOf(":") + 1, topic_len)
+        cw01_mqtt_vars.new_payload = cw01_vars.mqtt_message.substr(cw01_vars.mqtt_message.indexOf(":") + 1 + cw01_mqtt_vars.new_topic.length, cw01_vars.mqtt_message.length - (cw01_vars.mqtt_message.indexOf(":") + cw01_mqtt_vars.new_topic.length + 6))
 
         cw01_mqtt_vars.receiving_msg = false
     }
