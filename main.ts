@@ -905,6 +905,7 @@ namespace cw01 {
                     basic.pause(100)
                     serial.readBuffer(17)
                     ctrl_pkt = (pins.unpackBuffer("!B", serial.readBuffer(1)))[0]
+                    basic.showNumber(ctrl_pkt)
 
                     if (ctrl_pkt == 48) {
                         IoTMQTTGetData()
