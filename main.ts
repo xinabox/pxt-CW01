@@ -733,6 +733,9 @@ namespace cw01 {
 
         cw01_vars.timer = input.runningTime()
 
+        serial.writeString("AT+CIPRECVDATA=200" + cw01_vars.NEWLINE)
+        basic.pause(100)
+        serial.readString()
 
         control.inBackground(function () {
             while (true) {
