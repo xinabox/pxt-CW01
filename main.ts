@@ -877,13 +877,13 @@ namespace cw01 {
     //% block="CW01 on message received"
     export function onMessageReceived(handler: () => void) {
 
-        //control.onEvent(EventBusSource.MICROBIT_ID_BUTTON_AB, EventBusValue.MICROBIT_BUTTON_EVT_CLICK, function () {
+        control.onEvent(EventBusSource.MICROBIT_ID_BUTTON_AB, EventBusValue.MICROBIT_BUTTON_EVT_CLICK, function () {
 
             /*basic.pause(20000)
  
             basic.showString("#")*/
 
-            /*serial.onDataReceived("\n", function () {
+            serial.onDataReceived("\n", function () {
 
                 while (cw01_mqtt_vars.sending_payload || cw01_mqtt_vars.sending_pingreq) {
                     basic.pause(100)
@@ -916,7 +916,7 @@ namespace cw01 {
                 cw01_mqtt_vars.mqtt_busy = false
 
             })
-        })*/
+        })
     }
 
 
