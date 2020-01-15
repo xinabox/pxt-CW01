@@ -121,8 +121,8 @@ namespace cw01 {
 
     basic.showIcon(IconNames.Chessboard)
     basic.pause(2000)
-   /* serial.writeString("ATE0" + cw01_vars.NEWLINE)
-    basic.pause(300)*/
+    /* serial.writeString("ATE0" + cw01_vars.NEWLINE)
+     basic.pause(300)*/
     serial.readString()
     cw01_mqtt_vars.mac_addr = extract_mac()
     serial.writeString("AT+CWMODE_DEF=3" + cw01_vars.NEWLINE)
