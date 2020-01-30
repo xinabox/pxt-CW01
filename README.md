@@ -1,7 +1,6 @@
 [![GitHub Issues](https://img.shields.io/github/issues/xinabox/pxt-CW01.svg)](https://github.com/xinabox/pxt-CW01/issues) 
 ![GitHub Commit](https://img.shields.io/github/last-commit/xinabox/pxt-CW01) 
 ![Maintained](https://img.shields.io/maintenance/yes/2020) 
-![Build status badge](https://github.com/xinabox/pxt-CW01/workflows/maker/badge.svg)
 ![Build status badge](https://github.com/xinabox/pxt-CW01/workflows/microbit/badge.svg)
 
 # XinaBox CW01 MakeCode extension
