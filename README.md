@@ -2,7 +2,8 @@
 ![GitHub Commit](https://img.shields.io/github/last-commit/xinabox/pxt-cw01) 
 ![Maintained](https://img.shields.io/maintenance/yes/2020) 
 ![Build status badge](https://github.com/xinabox/pxt-cw01/workflows/maker/badge.svg)
-![Build status badge](https://github.com/xinabox/pxt-cw01/workflows/microbit/badge.svg)# XinaBox CW01 MakeCode extension
+![Build status badge](https://github.com/xinabox/pxt-cw01/workflows/microbit/badge.svg)
+# XinaBox CW01 MakeCode extension
 
 This library provides functions to access environmental data from the [XinaBox CW01](https://xinabox.cc/products/cw01?_pos=1&_sid=130924612&_ss=r).
 
