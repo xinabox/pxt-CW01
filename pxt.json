@@ -3,7 +3,8 @@
     "version": "0.0.462",
     "description": "",
     "dependencies": {
-        "core": "*"
+        "core": "*",
+        "radio": "*"
     },
     "files": [
         "README.md",
