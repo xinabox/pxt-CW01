@@ -716,7 +716,7 @@ namespace cw01 {
     //% advanced=true
     //% blockId="IoTSendThreeValuesToAzure" block="CW01 update Azure variables %asset1 with value %value1, %asset2 with value %value2 and %asset3 with value %value3 "
     export function IoTSendThreeValuesToAzure(asset1: string, value1: number, asset2: string, value2: number, asset3: string, value3: number): void {
-        let payload: string = "{\"" + asset1 + "\": " + value1.toString() + "," + "\"" + asset2 + "\": " + value2.toString() + "," + "\"" + asset3 + "\"" + value3.toString() + "}"
+        let payload: string = "{\"" + asset1 + "\": " + value1.toString() + "," + "\"" + asset2 + "\": " + value2.toString() + "," + "\"" + asset3 + "\": " + value3.toString() + "}"
 
         let request: string = "POST /135/" + cw01_vars.azureAccess + " HTTP/1.1" + cw01_vars.NEWLINE +
             "Host: proxy.xinabox.cc" + cw01_vars.NEWLINE +
@@ -747,7 +747,7 @@ namespace cw01 {
     //% advanced=true
     //% blockId="IoTSendFourValuesToAzure" block="CW01 update Azure variables %asset1 with value %value1, %asset2 with value %value2, %asset3 with value %value3 and %asset4 with value %value4"
     export function IoTSendFourValuesToAzure(asset1: string, value1: number, asset2: string, value2: number, asset3: string, value3: number, asset4: string, value4: number): void {
-        let payload: string = "{\"" + asset1 + "\": " + value1.toString() + "," + "\"" + asset2 + "\": " + value2.toString() + "," + "\"" + asset3 + "\"" + value3.toString() + "," + "\"" + asset4 + "\"" + value4.toString() + "}"
+        let payload: string = "{\"" + asset1 + "\": " + value1.toString() + "," + "\"" + asset2 + "\": " + value2.toString() + "," + "\"" + asset3 + "\": " + value3.toString() + "," + "\"" + asset4 + "\": " + value4.toString() + "}"
 
         let request: string = "POST /135/" + cw01_vars.azureAccess + " HTTP/1.1" + cw01_vars.NEWLINE +
             "Host: proxy.xinabox.cc" + cw01_vars.NEWLINE +
