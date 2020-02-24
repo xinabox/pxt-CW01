@@ -678,6 +678,99 @@ namespace cw01 {
     }
 
     /**
+    * Send two numerical values to Microsoft Azure cloud computing platform
+    */
+    //% weight=91 color=#4B0082
+    //% group="Azure"
+    //% advanced=true
+    //% blockId="IoTSendTwoValuesToAzure" block="CW01 update Azure variables %asset1 with value %value1 and %asset2 with value %value2"
+    export function IoTSendTwoValuesToAzure(asset1: string, value1: number, asset2: string, value2: number): void {
+        let payload: string = "{\"" + asset1 + "\": " + value1.toString() + "," + "\"" + asset2 + "\": " + value2.toString() + "}"
+
+        let request: string = "POST /135/" + cw01_vars.azureAccess + " HTTP/1.1" + cw01_vars.NEWLINE +
+            "Host: proxy.xinabox.cc" + cw01_vars.NEWLINE +
+            "User-Agent: CW01/1.0" + cw01_vars.NEWLINE +
+            "Content-Type: application/json" + cw01_vars.NEWLINE +
+            "Accept: */*" + cw01_vars.NEWLINE +
+            "Content-Length: " + (payload.length).toString() + cw01_vars.NEWLINE + cw01_vars.NEWLINE + payload + cw01_vars.NEWLINE
+
+
+
+        serial.writeString("AT+CIPSEND=" + (request.length).toString() + cw01_vars.NEWLINE)
+        basic.pause(100)
+        serial.writeString(request)
+        basic.pause(10)
+        serial.readString()
+        basic.pause(1000)
+
+        if (!get_status()) {
+            connectToAzure(cw01_vars.azureAccess)
+        }
+    }
+
+    /**
+* Send two numerical values to Microsoft Azure cloud computing platform
+*/
+    //% weight=91 color=#4B0082
+    //% group="Azure"
+    //% advanced=true
+    //% blockId="IoTSendThreeValuesToAzure" block="CW01 update Azure variables %asset1 with value %value1, %asset2 with value %value2 and %asset3 with value %value3 "
+    export function IoTSendThreeValuesToAzure(asset1: string, value1: number, asset2: string, value2: number, asset3: string, value3: number): void {
+        let payload: string = "{\"" + asset1 + "\": " + value1.toString() + "," + "\"" + asset2 + "\": " + value2.toString() + "," + "\"" + asset3 + "\"" + value3.toString() + "}"
+
+        let request: string = "POST /135/" + cw01_vars.azureAccess + " HTTP/1.1" + cw01_vars.NEWLINE +
+            "Host: proxy.xinabox.cc" + cw01_vars.NEWLINE +
+            "User-Agent: CW01/1.0" + cw01_vars.NEWLINE +
+            "Content-Type: application/json" + cw01_vars.NEWLINE +
+            "Accept: */*" + cw01_vars.NEWLINE +
+            "Content-Length: " + (payload.length).toString() + cw01_vars.NEWLINE + cw01_vars.NEWLINE + payload + cw01_vars.NEWLINE
+
+
+
+        serial.writeString("AT+CIPSEND=" + (request.length).toString() + cw01_vars.NEWLINE)
+        basic.pause(100)
+        serial.writeString(request)
+        basic.pause(10)
+        serial.readString()
+        basic.pause(1000)
+
+        if (!get_status()) {
+            connectToAzure(cw01_vars.azureAccess)
+        }
+    }
+
+    /**
+* Send two numerical values to Microsoft Azure cloud computing platform
+*/
+    //% weight=91 color=#4B0082
+    //% group="Azure"
+    //% advanced=true
+    //% blockId="IoTSendFourValuesToAzure" block="CW01 update Azure variables %asset1 with value %value1, %asset2 with value %value2, %asset3 with value %value3 and %asset4 with value %value4"
+    export function IoTSendFourValuesToAzure(asset1: string, value1: number, asset2: string, value2: number, asset3: string, value3: number, asset4: string, value4: number): void {
+        let payload: string = "{\"" + asset1 + "\": " + value1.toString() + "," + "\"" + asset2 + "\": " + value2.toString() + "," + "\"" + asset3 + "\"" + value3.toString() + "," + "\"" + asset4 + "\"" + value4.toString() + "}"
+
+        let request: string = "POST /135/" + cw01_vars.azureAccess + " HTTP/1.1" + cw01_vars.NEWLINE +
+            "Host: proxy.xinabox.cc" + cw01_vars.NEWLINE +
+            "User-Agent: CW01/1.0" + cw01_vars.NEWLINE +
+            "Content-Type: application/json" + cw01_vars.NEWLINE +
+            "Accept: */*" + cw01_vars.NEWLINE +
+            "Content-Length: " + (payload.length).toString() + cw01_vars.NEWLINE + cw01_vars.NEWLINE + payload + cw01_vars.NEWLINE
+
+
+
+        serial.writeString("AT+CIPSEND=" + (request.length).toString() + cw01_vars.NEWLINE)
+        basic.pause(100)
+        serial.writeString(request)
+        basic.pause(10)
+        serial.readString()
+        basic.pause(1000)
+
+        if (!get_status()) {
+            connectToAzure(cw01_vars.azureAccess)
+        }
+    }
+
+    /**
     * Connect to MQTT broker through port number 1883
     */
     //% weight=91
