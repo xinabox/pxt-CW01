@@ -771,6 +771,104 @@ namespace cw01 {
     }
 
     /**
+* Send two Values to Microsoft Azure and get response.
+*/
+    //% weight=91 color=#4B0082
+    //% group="Azure"
+    //% blockId="IoTSendTwoValuesSaveResponseAzure" block="CW01 update two variables %asset1 and %asset2 with values %value1 and %value2 and get response"
+    export function IoTSendTwoValuesSaveResponseAzure(asset1: string, asset2: string, value1: number, value2: number): string {
+
+        let value: string
+        let index1: number
+        let index2: number
+        let len: number = 0
+        let i: number = 0
+        let connection: boolean = true
+
+        let payload: string = "{\"" + asset1 + "\": " + value1.toString() + "," + "\"" + asset2 + "\": " + value2.toString() + "}"
+
+        let request: string = "POST /135/" + cw01_vars.azureAccess + " HTTP/1.1" + cw01_vars.NEWLINE +
+            "Host: proxy.xinabox.cc" + cw01_vars.NEWLINE +
+            "User-Agent: CW01/1.0" + cw01_vars.NEWLINE +
+            "Content-Type: application/json" + cw01_vars.NEWLINE +
+            "Connection: Keep-Alive" + cw01_vars.NEWLINE +
+            "Accept: */*" + cw01_vars.NEWLINE +
+            "Content-Length: " + (payload.length).toString() + cw01_vars.NEWLINE + cw01_vars.NEWLINE + payload + cw01_vars.NEWLINE
+
+
+
+        serial.writeString("AT+CIPSEND=" + (request.length).toString() + cw01_vars.NEWLINE)
+        basic.pause(100)
+        serial.writeString(request)
+        basic.pause(10)
+
+        basic.pause(3000)
+
+
+        basic.pause(100)
+
+        if (!get_status()) {
+            connection = false
+            connectToAzure(cw01_vars.azureAccess)
+        }
+
+        basic.pause(500)
+
+        if (connection) {
+            cw01_vars.res = ""
+
+            serial.readString()
+            serial.writeString("AT+CIPRECVDATA=900" + cw01_vars.NEWLINE)
+            basic.pause(200)
+
+            serial.readString()
+
+            serial.writeString("AT+CIPRECVDATA=800" + cw01_vars.NEWLINE)
+            basic.pause(200)
+
+            cw01_vars.res = ""
+
+            while (true) {
+                cw01_vars.res = serial.readUntil("\n")
+                basic.pause(1)
+                if (cw01_vars.res.compare("\r") == 0)
+                    break
+            }
+
+            while (true) {
+                cw01_vars.res = serial.readUntil("\n")
+                basic.pause(1)
+                if (cw01_vars.res.compare("\r") == 0)
+                    break
+            }
+
+            cw01_vars.res = serial.readString()
+            index1 = 0
+            index2 = cw01_vars.res.indexOf("OK")
+            len = index2 - index1 - 1
+
+            value = cw01_vars.res.substr(index1, len)
+
+        } else {
+            value = ""
+        }
+
+
+        /*if (cw01_vars.res.includes(asset)) {
+            index1 = cw01_vars.res.indexOf(searchString) + searchString.length
+            index2 = cw01_vars.res.indexOf("}", index1)
+            value = cw01_vars.res.substr(index1, index2 - index1)
+        } else {
+
+            value = ""
+
+        }*/
+
+        return value
+
+    }
+
+    /**
     * Connect to MQTT broker through port number 1883
     */
     //% weight=91
