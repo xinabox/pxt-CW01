@@ -1282,9 +1282,9 @@ namespace cw01 {
     //% weight=91 color=#f2ca00
     //% group="Ubidots"
     //% blockId="IoTaddLocation" block="CW01 latitude is %lat and longitude is %lng"
-    export function IoTaddLocation(lat: number, lng: number): void {
-        cw01_vars.latitude = lat
-        cw01_vars.longitude = lng
+    export function IoTaddLocation(lat: string, lng: string): void {
+        cw01_vars.latitude = parseFloat(lat)
+        cw01_vars.longitude = parseFloat(lng)
     }
 
     function getDataLen(): number {
