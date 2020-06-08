@@ -133,6 +133,7 @@ namespace cw01 {
     basic.pause(300)
     serial.readString();
     serial.writeString("AT+CWHOSTNAME?" + cw01_vars.NEWLINE);
+    basic.pause(100)
 
     read_and_set_name();
 
@@ -638,7 +639,7 @@ namespace cw01 {
         serial.writeString("AT+CIPSEND=" + (request.length).toString() + cw01_vars.NEWLINE)
         basic.pause(100)
         serial.writeString(request)
-        basic.pause(10)
+        basic.pause(100)
         serial.readString()
         basic.pause(1000)
 
@@ -668,7 +669,7 @@ namespace cw01 {
         serial.writeString("AT+CIPSEND=" + (request.length).toString() + cw01_vars.NEWLINE)
         basic.pause(100)
         serial.writeString(request)
-        basic.pause(10)
+        basic.pause(100)
         serial.readString()
         basic.pause(1000)
 
@@ -699,7 +700,7 @@ namespace cw01 {
         serial.writeString("AT+CIPSEND=" + (request.length).toString() + cw01_vars.NEWLINE)
         basic.pause(100)
         serial.writeString(request)
-        basic.pause(10)
+        basic.pause(100)
         serial.readString()
         basic.pause(1000);
 
@@ -730,7 +731,7 @@ namespace cw01 {
         serial.writeString("AT+CIPSEND=" + (request.length).toString() + cw01_vars.NEWLINE)
         basic.pause(100)
         serial.writeString(request)
-        basic.pause(10)
+        basic.pause(100)
         serial.readString()
         basic.pause(1000)
 
@@ -761,7 +762,7 @@ namespace cw01 {
         serial.writeString("AT+CIPSEND=" + (request.length).toString() + cw01_vars.NEWLINE)
         basic.pause(100)
         serial.writeString(request)
-        basic.pause(10)
+        basic.pause(100)
         serial.readString()
         basic.pause(1000)
 
@@ -1202,7 +1203,7 @@ namespace cw01 {
         serial.writeString("AT+CIPSEND=" + (request.length).toString() + cw01_vars.NEWLINE)
         basic.pause(100)
         serial.writeString(request)
-        basic.pause(10)
+        basic.pause(100)
         serial.readString()
         basic.pause(1000)
 
@@ -1239,7 +1240,7 @@ namespace cw01 {
         serial.writeString("AT+CIPSEND=" + (request.length).toString() + cw01_vars.NEWLINE)
         basic.pause(100)
         serial.writeString(request)
-        basic.pause(10)
+        basic.pause(100)
         serial.readString()
 
         for (; i < 10; i++) {
