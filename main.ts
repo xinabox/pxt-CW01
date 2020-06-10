@@ -133,7 +133,7 @@ namespace cw01 {
     basic.pause(300)
     serial.readString();
     serial.writeString("AT+CWHOSTNAME?" + cw01_vars.NEWLINE);
-    basic.pause(100)
+    basic.pause(500)
 
     read_and_set_name();
 
