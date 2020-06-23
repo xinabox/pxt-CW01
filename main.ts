@@ -114,7 +114,7 @@ namespace cw01 {
     let cw01_vars = new cw01_int_var123()
     let cw01_mqtt_vars = new cw01_mqtt()
     let cw01_button_object = new button_class()
-    let en_Feedback: boolean = false
+    let en_Feedback: boolean = true
 
     cw01_vars.start = true
     serial.redirect(SerialPin.P1, SerialPin.P0, 115200)
@@ -185,6 +185,7 @@ namespace cw01 {
         if (cw01_vars.res.includes("WIFI CONNECTED")) {
             basic.showString("C")
             basic.pause(2000)
+            basic.showString("")
             cw01_vars.res = ""
         } else {
             basic.showString("D")
