@@ -1342,8 +1342,10 @@ namespace cw01 {
         }else {
             if (cw01_vars.res.includes("HTTP/1.1 200") || cw01_vars.res.includes("HTTP/1.0 200") || cw01_vars.res.includes("HTTP/1.1 201") || cw01_vars.res.includes("HTTP/1.0 202"))
             {
+                basic.pause(200)
                 return true
             }else{
+                basic.pause(200)
                 return false
             }
         }
