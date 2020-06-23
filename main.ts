@@ -1014,6 +1014,7 @@ namespace cw01 {
 
         serial.readString()
 
+        if(en_Feedback)
         basic.showIcon(IconNames.Target)
 
         serial.writeBuffer(start_byte)
@@ -1338,8 +1339,13 @@ namespace cw01 {
                 basic.showString("", 50)
                 return false
             }
-        }else{
-            return true
+        }else {
+            if (cw01_vars.res.includes("HTTP/1.1 200") || cw01_vars.res.includes("HTTP/1.0 200") || cw01_vars.res.includes("HTTP/1.1 201") || cw01_vars.res.includes("HTTP/1.0 202"))
+            {
+                return true
+            }else{
+                return false
+            }
         }
     }
 
