@@ -114,6 +114,7 @@ namespace cw01 {
     let cw01_vars = new cw01_int_var123()
     let cw01_mqtt_vars = new cw01_mqtt()
     let cw01_button_object = new button_class()
+    let en_Feedback: boolean = false
 
     cw01_vars.start = true
     serial.redirect(SerialPin.P1, SerialPin.P0, 115200)
@@ -182,12 +183,23 @@ namespace cw01 {
         } while (!cw01_vars.res.includes("WIFI CONNECTED"));
 
         if (cw01_vars.res.includes("WIFI CONNECTED")) {
-            basic.pause(2000)
             basic.showString("C")
+            basic.pause(2000)
             cw01_vars.res = ""
         } else {
             basic.showString("D")
         }
+    }
+
+    /**
+    * Enable feedback through microbit Matrix LEDs
+    */
+    //% weight=91 color=#ad0303
+    //% group="Common"
+    //% blockId="enableFeedback" block="CW01 enable feedback LEDs %u"
+    export function enableFeedback(u: boolean): void
+    {
+        en_Feedback = u
     }
 
     /**
@@ -1314,14 +1326,19 @@ namespace cw01 {
         basic.pause(300)
         cw01_vars.res = serial.readString()
 
-        if (cw01_vars.res.includes("HTTP/1.1 200") || cw01_vars.res.includes("HTTP/1.0 200") || cw01_vars.res.includes("HTTP/1.1 201") || cw01_vars.res.includes("HTTP/1.0 202")) {
-            basic.showIcon(IconNames.Yes, 50)
-            basic.showString("", 50)
+        if(en_Feedback)
+        {
+            if (cw01_vars.res.includes("HTTP/1.1 200") || cw01_vars.res.includes("HTTP/1.0 200") || cw01_vars.res.includes("HTTP/1.1 201") || cw01_vars.res.includes("HTTP/1.0 202")) {
+                basic.showIcon(IconNames.Yes, 50)
+                basic.showString("", 50)
+                return true
+            } else {
+                basic.showIcon(IconNames.No, 50)
+                basic.showString("", 50)
+                return false
+            }
+        }else{
             return true
-        } else {
-            basic.showIcon(IconNames.No, 50)
-            basic.showString("", 50)
-            return false
         }
     }
 
