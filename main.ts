@@ -179,9 +179,15 @@ namespace cw01 {
         basic.pause(200)
         serial.readString()
 
+        let loop_count = 0
+
         do {
             cw01_vars.res = serial.readString()
             basic.pause(1000)
+            loop_count++
+
+            if(loop_count == 10)
+                break
         } while (!cw01_vars.res.includes("WIFI CONNECTED"));
 
         if (cw01_vars.res.includes("WIFI CONNECTED")) {
@@ -189,8 +195,13 @@ namespace cw01 {
             basic.pause(2000)
             basic.showString("")
             cw01_vars.res = ""
-        } else {
+        }
+
+        if(loop_count == 10)
+        {
             basic.showString("D")
+            basic.pause(2000)
+            basic.showString("")
         }
     }
 
