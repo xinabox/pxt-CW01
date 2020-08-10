@@ -186,7 +186,7 @@ namespace cw01 {
             basic.pause(1000)
             loop_count++
 
-            if(loop_count == 10)
+            if(loop_count == 20)
                 break
         } while (!cw01_vars.res.includes("WIFI CONNECTED"));
 
@@ -197,7 +197,7 @@ namespace cw01 {
             cw01_vars.res = ""
         }
 
-        if(loop_count == 10)
+        if(loop_count == 20)
         {
             basic.showString("D")
             basic.pause(2000)
