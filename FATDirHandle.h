@@ -1,8 +1,10 @@
    #ifndef MBED_FATDIRHANDLE_H
    #define MBED_FATDIRHANDLE_H
 
+   #include "mbed.h"
+
    #include "ff.h"
-   //#include "DirHandle.h"
+   #include "DirHandle.h"
 
    using namespace mbed;
 
