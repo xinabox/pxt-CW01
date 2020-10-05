@@ -2,7 +2,7 @@
    #define MBED_FATDIRHANDLE_H
 
    #include "ff.h"
-   #include "DirHandle.h"
+   //#include "DirHandle.h"
 
    using namespace mbed;
 
