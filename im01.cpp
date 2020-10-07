@@ -21,7 +21,7 @@ String _read(String s)
 	char* error_no_file = "ERROR! NO FILE";
 	char* cant_read_file = "ERROR! CANT READ FILE";
 	//char* path = "/sd/im01/";
-	long lSize;
+	int lSize;
 	size_t b_read;
 
     SDFileSystem sd(P0_21, P0_22, P0_23, P0_16, "sd");
@@ -48,7 +48,7 @@ String _read(String s)
         return mkString(cant_read_file, strlen(cant_read_file));
 	}
 
-	String str = mkString(_word, strlen(_word));
+	String str = mkString(_word, lSize);
 
 	free(_word);
 	return str;
