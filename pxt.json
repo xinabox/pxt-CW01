@@ -3,7 +3,8 @@
     "version": "0.3.5",
     "description": "",
     "dependencies": {
-        "core": "*"
+        "core": "*",
+        "microphone": "*"
     },
     "files": [
         "README.md",
@@ -54,5 +55,8 @@
                 }
             }
         }
-    }
+    },
+    "disablesVariants": [
+        "mbcodal"
+    ]
 }
