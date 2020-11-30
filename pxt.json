@@ -34,6 +34,9 @@
         "microbit"
     ],
     "preferredEditor": "tsprj",
+    "disablesVariants": [
+        "mbcodal"
+    ],
     "yotta": {
         "config": {
             "microbit-dal": {
