@@ -8,23 +8,7 @@
     },
     "files": [
         "README.md",
-        "main.ts",
-        "FATDirHandle.cpp",
-        "FATDirHandle.h",
-        "FATFileHandle.cpp",
-        "FATFileHandle.h",
-        "FATFileSystem.cpp",
-        "FATFileSystem.h",
-        "SDFileSystem.cpp",
-        "SDFileSystem.h",
-        "ccsbcs.cpp",
-        "diskio.cpp",
-        "diskio.h",
-        "ff.h",
-        "ffconf.h",
-        "ff.cpp",
-        "integer.h",
-        "im01.cpp"
+        "main.ts"
     ],
     "testFiles": [
         "test.ts"

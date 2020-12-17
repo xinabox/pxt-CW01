@@ -7,7 +7,7 @@ enum USER {
 }
 
 
-//% groups='["Common",ATT", "Ubidots", "Azure", "MQTT", "SD Card", "others"]'
+//% groups='["Common",ATT", "Ubidots", "Azure", "MQTT", "others"]'
 //% weight=6 color=#2699BF icon="\uf110" block="CW01"
 namespace cw01 {
     class cw01_int_var123 {
@@ -1333,23 +1333,6 @@ namespace cw01 {
         return parseInt(value)
 
     }
-	
-	//%block="IM01 read file %u"
-    //%u.defl="log.txt"
-    //%group="SD Card"
-    export function readFile(u: string): string {
-        if(sdFlag==false) {
-            createFolder("im01")
-            sdFlag=true
-        }
-        return file_read("/sd/im01/" + u)
-    }
-
-    //%block="IM01 create folder %u"
-    function createFolder(u: string): void {
-        mkdir("/sd/" + u)
-        return;
-    }
 
 
     function get_status(): boolean {
@@ -1380,16 +1363,6 @@ namespace cw01 {
                 return false
             }
         }
-    }
-	
-	//%shim=im01::_read
-    function file_read(u: string): string {
-        return ""
-    }
-	
-	//%shim=im01::_mkdir
-    function mkdir(u: string): void {
-        return
     }
 
 } 
