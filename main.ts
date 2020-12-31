@@ -192,7 +192,7 @@ namespace cw01 {
 
         if (cw01_vars.res.includes("WIFI CONNECTED")) {
             basic.showString("C")
-            basic.pause(2000)
+            basic.pause(5000)
             basic.showString("")
             cw01_vars.res = ""
         }
@@ -200,7 +200,7 @@ namespace cw01 {
         if(loop_count == 20)
         {
             basic.showString("D")
-            basic.pause(2000)
+            basic.pause(5000)
             basic.showString("")
         }
     }
